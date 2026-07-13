@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}{{ domain.name }} | TrustScan{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>{{ domain.name }}</h1>
+    <p>Authorization: {{ domain.authorization_status }} · Trust score: {{ domain.current_trust_score|default:'—' }}</p>
+    <form method="post" action="{% url 'trigger_scan' domain.pk %}">
+        {% csrf_token %}
+        <button class="button" type="submit">Run scan</button>
+    </form>
+</div>
+
+<div class="grid">
+    <div class="metric">
+        <div>Root domain</div>
+        <h2>{{ domain.root_domain }}</h2>
+    </div>
+    <div class="metric">
+        <div>Monitoring</div>
+        <h2>{{ domain.monitoring_frequency }}</h2>
+    </div>
+    <div class="metric">
+        <div>Scan count</div>
+        <h2>{{ domain.scan_count }}</h2>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Recent scans</h3>
+    <table>
+        <thead><tr><th>ID</th><th>Status</th><th>Started</th></tr></thead>
+        <tbody>
+            {% for scan in recent_scans %}
+            <tr><td>{{ scan.id }}</td><td>{{ scan.status }}</td><td>{{ scan.started_at|default:'Pending' }}</td></tr>
+            {% empty %}
+            <tr><td colspan="3">No scans yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h3>Recent findings</h3>
+    <table>
+        <thead><tr><th>Title</th><th>Severity</th><th>Source</th></tr></thead>
+        <tbody>
+            {% for finding in recent_findings %}
+            <tr><td>{{ finding.title }}</td><td>{{ finding.severity }}</td><td>{{ finding.source_provider }}</td></tr>
+            {% empty %}
+            <tr><td colspan="3">No findings recorded yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

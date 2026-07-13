@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Domains | TrustScan{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Domain inventory</h1>
+    <p>Review monitored domains, authorization status, and trust posture from a single view.</p>
+</div>
+
+<div class="card">
+    <div class="grid">
+        <div class="metric">
+            <div>Total domains</div>
+            <h2>{{ domains.count }}</h2>
+        </div>
+        <div class="metric">
+            <div>Authorized</div>
+            <h2>{{ authorized_domain_count }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr><th>Name</th><th>Status</th><th>Trust score</th><th>Last scan</th></tr>
+        </thead>
+        <tbody>
+            {% for domain in domains %}
+            <tr>
+                <td><a href="{% url 'domain_detail' domain.pk %}">{{ domain.name }}</a></td>
+                <td>{{ domain.authorization_status }}</td>
+                <td>{{ domain.current_trust_score|default:'—' }}</td>
+                <td>{{ domain.last_scanned_at|default:'Not scanned yet' }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No domains have been added yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

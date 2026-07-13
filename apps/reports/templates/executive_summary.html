@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="trust-gradient rounded-3xl p-8 md:p-12 text-white mb-8 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-5" style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800'); background-size: cover;"></div>
+    <div class="relative z-10">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f512.png" alt="TrustScan" class="w-10 h-10">
+                    <h1 class="text-2xl md:text-3xl font-bold">TrustScan</h1>
+                </div>
+                <p class="text-blue-100 text-lg">Digital Trust Intelligence Platform</p>
+            </div>
+            <div class="text-right">
+                <p class="text-blue-200 text-sm">Report Generated</p>
+                <p class="font-mono text-lg">{{ scan_job.completed_at|date:"F d, Y H:i" }}</p>
+            </div>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center score-badge" style="background-color: {{ score_color }}22; border: 1px solid {{ score_color }};">
+                <div class="text-6xl md:text-8xl font-extrabold">{{ trust_score.overall }}</div>
+                <div class="text-xl mt-2 uppercase tracking-wider">{{ trust_score.status }}</div>
+                <div class="text-sm opacity-75 mt-2">Confidence: {{ trust_score.confidence }}%</div>
+            </div>
+            
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+                <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4ca.png" alt="Dimensions" class="w-6 h-6">
+                    Dimension Breakdown
+                </h3>
+                <div class="space-y-3">
+                    {% for dim_key, dim_score in trust_score.dimensions.items %}
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span>{{ dim_key|replace:"_"," "|title }}</span>
+                            <span class="font-bold">{{ dim_score }}</span>
+                        </div>
+                        <div class="dimension-bar">
+                            <div class="dimension-fill" style="width: {{ dim_score }}%; background: {{ score_color }};"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+                <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f9ea.png" alt="Benchmarks" class="w-6 h-6">
+                    Industry Benchmark
+                </h3>
+                <div class="space-y-3">
+                    <div class="bg-white/5 rounded-xl p-4">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span>Industry Average</span>
+                            <span class="font-bold">{{ brief.benchmarks.industry_average }}</span>
+                        </div>
+                        <div class="dimension-bar">
+                            <div class="dimension-fill" style="width: {{ brief.benchmarks.industry_average }}%; background: #f59e0b;"></div>
+                        </div>
+                    </div>
+                    <div class="bg-white/5 rounded-xl p-4">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span>Your Percentile</span>
+                            <span class="font-bold">{{ brief.benchmarks.industry_percentile }}th</span>
+                        </div>
+                        <div class="dimension-bar">
+                            <div class="dimension-fill" style="width: {{ brief.benchmarks.industry_percentile }}%; background: {{ score_color }};"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 card-hover">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center">
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2757.png" alt="Critical" class="w-6 h-6">
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-red-600">{{ severity_counts.critical }}</p>
+                    <p class="text-sm text-gray-500">Critical</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 card-hover">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a0.png" alt="High" class="w-6 h-6">
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-orange-600">{{ severity_counts.high }}</p>
+                    <p class="text-sm text-gray-500">High</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 card-hover">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center">
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a0-fe0f.png" alt="Medium" class="w-6 h-6">
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-yellow-600">{{ severity_counts.medium }}</p>
+                    <p class="text-sm text-gray-500">Medium</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 card-hover">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png" alt="Low" class="w-6 h-6">
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-blue-600">{{ severity_counts.low }}</p>
+                    <p class="text-sm text-gray-500">Low</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 card-hover">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center">
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2139.png" alt="Info" class="w-6 h-6">
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-gray-600">{{ severity_counts.info }}</p>
+                    <p class="text-sm text-gray-500">Info</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Risks -->
+    {% if top_risks %}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h2 class="text-xl font-bold flex items-center gap-2">
+                <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f6a8.png" alt="Risks" class="w-6 h-6">
+                Top Risks Requiring Attention
+            </h2>
+        </div>
+        <div class="divide-y divide-gray-100">
+            {% for risk in top_risks %}
+            <div class="risk-card p-6 hover:bg-red-50">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+                        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a0.png" alt="Risk" class="w-5 h-5 text-red-500">
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-gray-900 mb-1">{{ risk.title|default:risk.pattern }}</h3>
+                        <p class="text-gray-600">{{ risk.narrative|default:risk.description }}</p>
+                        <div class="flex items-center gap-4 mt-3 text-sm">
+                            <span class="px-2 py-1 rounded-full bg-red-50 text-red-700 font-medium">{{ risk.risk_level|upper }}</span>
+                            <span class="text-gray-500">Impact: {{ risk.estimated_impact|default:risk.estimated_score_impact }} pts</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Priority Actions -->
+    {% if top_actions %}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h2 class="text-xl font-bold flex items-center gap-2">
+                <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2705.png" alt="Actions" class="w-6 h-6">
+                Priority Actions to Improve Score
+            </h2>
+        </div>
+        <div class="divide-y divide-gray-100">
+            {% for action in top_actions %}
+            <div class="action-card p-6 hover:bg-green-50">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+                        <span class="text-lg font-bold text-green-600">{{ forloop.counter }}</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-900">{{ action.action }}</p>
+                        <div class="flex items-center gap-4 mt-2 text-sm">
+                            <span class="px-2 py-1 rounded-full bg-green-50 text-green-700 font-medium">+{{ action.impact }} pts</span>
+                            <span class="px-2 py-1 rounded-full bg-gray-50 text-gray-700">{{ action.effort }} Effort</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Threat Context -->
+    {% if brief.threat_context.active_campaigns or brief.threat_context.new_cves %}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-blue-50">
+            <h2 class="text-xl font-bold flex items-center gap-2 text-purple-800">
+                <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f6e1.png" alt="Threats" class="w-6 h-6">
+                Threat Intelligence Context
+            </h2>
+        </div>
+        <div class="p-6">
+            {% if brief.threat_context.active_campaigns %}
+            <div class="mb-6">
+                <h3 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f3d9.png" alt="Campaigns" class="w-5 h-5">
+                    Active Campaigns Targeting Your Sector
+                </h3>
+                <div class="space-y-2">
+                    {% for campaign in brief.threat_context.active_campaigns %}
+                    <div class="p-4 bg-purple-50 rounded-xl border border-purple-100">
+                        <p class="font-medium text-purple-800">{{ campaign.name }}</p>
+                        <p class="text-sm text-purple-600 mt-1">{{ campaign.relevance }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if brief.threat_context.new_cves %}
+            <div>
+                <h3 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4bb.png" alt="CVEs" class="w-5 h-5">
+                    New CVEs Affecting Your Tech Stack
+                </h3>
+                <div class="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+                    {% for cve in brief.threat_context.new_cves %}
+                    <div class="p-4 bg-red-50 rounded-xl border border-red-100">
+                        <p class="font-mono font-semibold text-red-800">{{ cve.cve_id }}</p>
+                        <p class="text-sm text-red-600">{{ cve.product }}</p>
+                        <p class="text-xs text-red-500 mt-1">CVSS: {{ cve.cvss_score }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Regulatory Compliance -->
+    {% if brief.regulatory_status %}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-green-50 to-emerald-50">
+            <h2 class="text-xl font-bold flex items-center gap-2 text-green-800">
+                <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4dd.png" alt="Compliance" class="w-6 h-6">
+                Regulatory Compliance - {{ brief.regulatory_status.regulation }}
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="flex items-center gap-4 mb-6 p-4 rounded-xl {% if brief.regulatory_status.compliance_level == 'COMPLIANT' %}bg-green-50{% elif brief.regulatory_status.compliance_level == 'PARTIAL' %}bg-yellow-50{% else %}bg-red-50{% endif %}">
+                <div class="w-12 h-12 rounded-xl {% if brief.regulatory_status.compliance_level == 'COMPLIANT' %}bg-green-100{% elif brief.regulatory_status.compliance_level == 'PARTIAL' %}bg-yellow-100{% else %}bg-red-100{% endif %} flex items-center justify-center">
+                    {% if brief.regulatory_status.compliance_level == 'COMPLIANT' %}
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2705.png" alt="Compliant" class="w-6 h-6">
+                    {% elif brief.regulatory_status.compliance_level == 'PARTIAL' %}
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a0.png" alt="Partial" class="w-6 h-6">
+                    {% else %}
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/274c.png" alt="Non-Compliant" class="w-6 h-6">
+                    {% endif %}
+                </div>
+                <div>
+                    <p class="font-semibold text-gray-900">Compliance Level</p>
+                    <p class="text-lg font-bold {% if brief.regulatory_status.compliance_level == 'COMPLIANT' %}text-green-700{% elif brief.regulatory_status.compliance_level == 'PARTIAL' %}text-yellow-700{% else %}text-red-700{% endif %}">{{ brief.regulatory_status.compliance_level }}</p>
+                </div>
+            </div>
+            
+            {% if brief.regulatory_status.gaps %}
+            <h3 class="font-semibold text-gray-900 mb-3">Compliance Gaps</h3>
+            <div class="space-y-2">
+                {% for gap in brief.regulatory_status.gaps %}
+                <div class="p-4 bg-red-50 rounded-xl border border-red-100 flex items-start gap-3">
+                    <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/274c.png" alt="Gap" class="w-5 h-5 mt-0.5 flex-shrink-0">
+                    <p class="text-red-700">{{ gap }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Footer -->
+    <div class="text-center py-8 text-gray-500 text-sm">
+        <p class="mb-2">This report was generated by TrustScan on {{ scan_job.completed_at|date:"F d, Y" }}</p>
+        <p>TrustScan — Map and protect your digital business</p>
+        <p class="mt-2"><a href="https://trustscan.co.ke" class="text-blue-600 hover:underline">trustscan.co.ke</a></p>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Animate dimension bars on load
+    document.addEventListener('DOMContentLoaded', function() {
+        const fills = document.querySelectorAll('.dimension-fill');
+        fills.forEach(fill => {
+            const width = fill.style.width;
+            fill.style.width = '0%';
+            setTimeout(() => {
+                fill.style.width = width;
+            }, 100);
+        });
+    });
+</script>
+{% endblock %}

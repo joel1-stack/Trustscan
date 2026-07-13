@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p class="text-gray-600 mt-1">TrustScan platform overview</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Organizations</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">{{ total_organizations }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f465.png" alt="Orgs" class="w-6 h-6">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Domains</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">{{ total_domains }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f310.png" alt="Domains" class="w-6 h-6">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Total Scans</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">{{ total_scans }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50d.png" alt="Scans" class="w-6 h-6">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Avg Trust Score</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">{{ avg_score }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4ca.png" alt="Score" class="w-6 h-6">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <p class="text-sm font-medium text-gray-500">Completed Scans</p>
+                <p class="text-2xl font-bold text-gray-900 mt-1">{{ completed_scans }}</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <p class="text-sm font-medium text-gray-500">Scans This Week</p>
+                <p class="text-2xl font-bold text-gray-900 mt-1">{{ scans_this_week }}</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <p class="text-sm font-medium text-gray-500">Success Rate</p>
+                <p class="text-2xl font-bold text-gray-900 mt-1">{{ success_rate }}%</p>
+            </div>
+        </div>
+
+        <!-- Recent Scans -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100">
+                <h2 class="text-xl font-bold text-gray-900">Recent Scans</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr class="text-left text-sm font-medium text-gray-500">
+                            <th class="px-6 py-3">Domain</th>
+                            <th class="px-6 py-3">Organization</th>
+                            <th class="px-6 py-3">Type</th>
+                            <th class="px-6 py-3">Status</th>
+                            <th class="px-6 py-3">Score</th>
+                            <th class="px-6 py-3">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for scan in recent_scans %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-900">{{ scan.domain.name }}</td>
+                            <td class="px-6 py-4 text-gray-600">{{ scan.domain.organization.name }}</td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-700">
+                                    {{ scan.get_scan_type_display }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full 
+                                    {% if scan.status == 'completed' %}bg-green-100 text-green-700
+                                    {% elif scan.status == 'failed' %}bg-red-100 text-red-700
+                                    {% elif scan.status == 'pending' %}bg-yellow-100 text-yellow-700
+                                    {% else %}bg-blue-100 text-blue-700{% endif %}">
+                                    {{ scan.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if scan.trust_score %}
+                                <span class="font-medium {% if scan.trust_score >= 90 %}text-green-600{% elif scan.trust_score >= 70 %}text-blue-600{% elif scan.trust_score >= 50 %}text-yellow-600{% elif scan.trust_score >= 30 %}text-orange-600{% else %}text-red-600{% endif %}">
+                                    {{ scan.trust_score }}
+                                </span>
+                                {% else %}-{% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-gray-500 text-sm">{{ scan.completed_at|date:"M d, Y H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">No scans yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Scans | TrustScan{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Scan operations</h1>
+    <p>Track active, completed, and pending scan jobs for the monitored domains.</p>
+</div>
+
+<div class="grid">
+    <div class="metric">
+        <div>Total scans</div>
+        <h2>{{ scans.count }}</h2>
+    </div>
+    <div class="metric">
+        <div>Pending</div>
+        <h2>{{ pending_count }}</h2>
+    </div>
+    <div class="metric">
+        <div>Completed</div>
+        <h2>{{ completed_count }}</h2>
+    </div>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr><th>Domain</th><th>Status</th><th>Phase</th><th>Created</th></tr>
+        </thead>
+        <tbody>
+            {% for scan in scans %}
+            <tr>
+                <td>{{ scan.domain.name }}</td>
+                <td>{{ scan.status }}</td>
+                <td>{{ scan.current_phase|default:'—' }}</td>
+                <td>{{ scan.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No scans have been created yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
