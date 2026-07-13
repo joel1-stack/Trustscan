@@ -1,233 +1,215 @@
-# TrustScan - Digital Trust Intelligence Platform
+# TrustScan — Product Architecture: Engines & Lifecycle
 
-A comprehensive Digital Trust Intelligence Platform that continuously maps, verifies, and evaluates an organization's externally visible digital trust posture. Built for Kenyan SMEs and beyond.
+A standalone Digital Trust Intelligence Platform designed to integrate with TrustLayer.
 
-## 🎯 Overview
+---
 
-TrustScan helps organizations understand their digital exposure by scanning publicly visible assets associated with their domain and providing an actionable Trust Score with detailed remediation guidance.
+## Product Identity
 
-### Key Features
+| Property | Value |
+|----------|-------|
+| **Tagline** | Map and protect your digital business. |
+| **Target** | Kenyan SMEs, SACCOs, churches, schools, hospitals — any organization with a domain and no security team |
+| **Price Position** | Affordable per-scan or monthly subscription — not enterprise-priced like SecurityScorecard or Wiz |
 
-- **Passive Reconnaissance** - Only queries public data sources, never touches customer infrastructure
-- **Permission-Based Scanning** - Requires explicit domain ownership verification before scanning
-- **Comprehensive Coverage** - 13 intelligence layers from DNS to breach intelligence
-- **Actionable Scoring** - Weighted scoring across 6 dimensions with prioritized remediation
-- **Kenyan Context** - Built-in Kenya DPA compliance, CBK guidelines, local threat intelligence
-- **TrustLayer Integration** - API for transaction risk assessment
-- **Global Support** - Works with any TLD (.com, .org, .co.ke, etc.) and email addresses
+---
 
-## 🏗️ Architecture
+## Core Principle
 
-TrustScan follows a 7-engine pipeline architecture:
+TrustScan is a **read-only intelligence platform**. It never touches a customer's infrastructure — no login attempts, no port scanning beyond passive lookups, no brute force. It queries information a business has already made public, scores it, and explains what the score means.
 
-```
-Domain Input
-    │
-    ▼
-┌─────────────────┐
-│  DISCOVERY      │  ← Finds everything that exists (DNS, Certificates, WHOIS)
-│  ENGINE         │
-└────────┬────────┘
-         │ DiscoveryMap
-         ▼
-┌─────────────────┐
-│  RECONNAISSANCE │  ← Inspects every asset for security properties
-│  ENGINE         │
-└────────┬────────┘
-         │ RawSignal[] (500+ signals)
-         ▼
-┌─────────────────┐
-│  NORMALIZATION  │  ← Converts all formats into one language
-│  ENGINE         │
-└────────┬────────┘
-         │ NormalizedSignal[]
-         ▼
-┌─────────────────┐
-│  CORRELATION    │  ← Connects signals into patterns
-│  ENGINE         │
-└────────┬────────┘
-         │ Correlation[]
-         ▼
-┌─────────────────┐
-│  SCORING        │  ← Converts patterns into numbers
-│  ENGINE         │
-└────────┬────────┘
-         │ TrustScore
-         ▼
-┌─────────────────┐
-│  INTELLIGENCE   │  ← Adds context, benchmarks, predictions
-│  ENGINE         │
-└────────┬────────┘
-         │ IntelligenceBrief
-         ▼
-┌─────────────────┐
-│  REPORTING      │  ← Produces all output formats
-│  ENGINE         │
-└─────────────────┘
-```
+**The question the whole product answers:** *What can the internet already see about this domain?*
 
-## 🚀 Quick Start
+The raw data isn't the product — anyone can query DNS. The product is **interpretation** (translating technical findings into business risk), **scoring** (weighting findings for the Kenyan context), and **action** (telling the owner exactly what to fix and why).
 
-### Prerequisites
+---
 
-- Python 3.11+
-- Redis (for Celery)
-- PostgreSQL (production) or SQLite (development)
+## The Five Engines
 
-### Installation
+### 1. Discovery Engine — find everything that exists
 
-```bash
-# Clone the repository
-git clone https://github.com/joel1-stack/Trustscan.git
-cd Trustscan
+Takes one input, a domain, and expands it into every discoverable asset before any analysis begins.
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+- **DNS resolution** — IP addresses, name servers, MX records
+- **Certificate Transparency** — every subdomain that has ever been issued an SSL certificate
+- **Passive DNS history** — subdomains seen by internet crawlers over time
+- **WHOIS & registry** — registration details, expiry, privacy status
 
-# Install dependencies
-pip install -r requirements.txt
+**Output:** a **Discovery Map** — the full inventory of assets found. Discovery is non-destructive and passive throughout — no brute force, no login attempts.
 
-# Set up environment
-cp .env.example .env
-# Edit .env with your settings
+---
 
-# Run migrations
-python manage.py migrate
+### 2. Reconnaissance Engine — interrogate each asset
 
-# Create superuser
-python manage.py createsuperuser
+For every asset in the Discovery Map, this engine asks specific security questions, each mapped to a real-world risk.
 
-# Start development server
-python manage.py runserver
-```
+| Module | Question it answers |
+|--------|---------------------|
+| DNS Inspector | Is DNS configured securely? (SPF, DKIM, DMARC, DNSSEC, zone transfers) |
+| SSL/TLS Inspector | Is encryption properly implemented? (validity, expiry, cipher strength) |
+| Email Security Inspector | Can attackers spoof emails from this domain? |
+| Web Security Inspector | Are security headers present? (HSTS, CSP, X-Frame-Options) |
+| Technology Profiler | What software is running? (headers, HTML source, favicon hashes) |
+| Exposure Detector | Are sensitive services visible? (admin panels, databases, open ports) |
+| Breach Intelligence | Have credentials tied to this domain been leaked? |
+| Reputation Monitor | Is this domain trusted? (blacklists, malware feeds, Safe Browsing) |
 
-### Starting Celery Workers
+---
 
-```bash
-# Terminal 1: Celery worker (all queues)
-celery -A config worker --pool=solo -l info
+### 3. Correlation Engine — connect findings into patterns
 
-# Terminal 2: Celery beat (scheduler)
-celery -A config beat -l info
+Individual findings are noise. This engine finds the patterns across them — this is where the product becomes intelligent rather than a data dump.
 
-# Terminal 3: Redis (if not running)
-redis-server
-```
+| Pattern | What it means | Risk |
+|---------|---------------|------|
+| Shadow IT | A subdomain like `pay.hospital.co.ke` exists but isn't in the asset register | Critical |
+| Certificate mismatch | A subdomain serves a certificate for an unrelated service — misconfiguration or hijack | Critical |
+| Email spoofing chain | SPF allows all, DMARC has no enforcement, DKIM missing | High |
+| Breach cascade | Multiple employee emails leaked, some sharing password patterns | High |
+| Exposed admin, no MFA | An admin panel is public with no second factor and outdated software | Critical |
+| Domain expiry risk | Domain expires soon with no auto-renew, business-critical email tied to it | High |
 
-## 📁 Project Structure
+---
 
-```
-Trustscan/
-├── config/                 # Django project configuration
-├── apps/
-│   ├── core/              # Shared utilities, base models
-│   ├── accounts/          # User management, organizations, teams
-│   ├── domains/           # Domain management & authorization
-│   ├── scanner/           # Scan orchestration & job management
-│   ├── discovery/         # Engine 1: Discovery Engine
-│   ├── reconnaissance/    # Engine 2: Reconnaissance Engine
-│   ├── correlation/       # Engine 3: Correlation Engine
-│   ├── scoring/           # Engine 4: Scoring Engine
-│   ├── intelligence/      # Engine 5: Intelligence Engine
-│   ├── reports/           # Engine 6: Reporting Engine
-│   ├── billing/           # Subscriptions & M-Pesa integration
-│   ├── api/               # External API (TrustLayer integration)
-│   └── dashboard/         # Admin dashboard
-├── workers/               # Celery configuration
-├── external/              # Third-party API wrappers
-├── templates/             # Global Django templates
-├── static/                # CSS, JS, images
-├── docs/                  # Documentation
-├── tests/                 # Test suite
-└── scripts/               # Management commands
-```
+### 4. Scoring Engine — the moat
 
-## 🔧 Configuration
+Converts findings and correlations into a single, explainable Trust Score.
 
-### Environment Variables
+| Dimension | Weight | What it measures |
+|-----------|--------|------------------|
+| Identity Integrity | 20% | Can the organization prove domain ownership? Is WHOIS accurate? |
+| Email Security | 20% | SPF / DKIM / DMARC strength — can this domain be impersonated in email? |
+| Infrastructure Hygiene | 15% | SSL validity, DNSSEC, certificate management |
+| Exposure Surface | 15% | Discoverable assets, sensitive subdomains, open services |
+| Breach History | 15% | Credential leaks, past compromises |
+| Reputation & Trust | 15% | Blacklist status, domain age, spam scores |
 
-```env
-# Django
-SECRET_KEY=your-secret-key
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
+Scoring is **rule-based, not machine-learned**, for v1: transparent, auditable, and fast to tune for the Kenyan market. Every score has to be explainable to a business owner who has never heard of DMARC.
 
-# Database (SQLite for dev)
-DATABASE_URL=sqlite:///db.sqlite3
+| Score Range | Label | Meaning |
+|-------------|-------|---------|
+| 90–100 | Excellent | Strong posture, low risk of impersonation or compromise |
+| 70–89 | Good | Solid foundation, minor issues to address |
+| 50–69 | Fair | Visible weaknesses, action recommended |
+| 30–49 | Poor | Significant exposure, high risk of incident |
+| 0–29 | Critical | Immediate action required |
 
-# Redis & Celery
-CELERY_BROKER_URL=redis://localhost:6379/0
-CELERY_RESULT_BACKEND=redis://localhost:6379/1
-REDIS_URL=redis://localhost:6379/2
+---
 
-# Email
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER=your-email@gmail.com
-EMAIL_HOST_PASSWORD=your-app-password
+### 5. Intelligence Engine — what makes it irreplaceable
 
-# External APIs
-SHODAN_API_KEY=
-CENSYS_API_ID=
-CENSYS_API_SECRET=
-HIBP_API_KEY=
-VIRUSTOTAL_API_KEY=
-GOOGLE_SAFE_BROWSING_API_KEY=
-SECURITYTRAILS_API_KEY=
-GITHUB_TOKEN=
+Analyzes trends across all scanned domains and turns a raw score into strategy.
 
-# M-Pesa
-MPESA_CONSUMER_KEY=
-MPESA_CONSUMER_SECRET=
-MPESA_SHORTCODE=
-MPESA_PASSKEY=
-MPESA_CALLBACK_URL=
-MPESA_ENVIRONMENT=sandbox
-```
+- **Peer benchmarking** — "Your score is 72; the average for Kenyan hospitals is 58"
+- **Trend analysis** — "Your score dropped 15 points after a new, unsecured subdomain appeared"
+- **Threat context** — "A phishing campaign is currently targeting .co.ke healthcare domains"
+- **Regulatory mapping** — Whether the current configuration meets Kenya Data Protection Act requirements
 
-## 📊 Intelligence Layers
+---
 
-| Layer | Source | What It Finds |
-|-------|--------|---------------|
-| DNS Intelligence | Public DNS resolvers | MX, A, TXT, SPF, DKIM, DMARC, DNSSEC |
-| Certificate Intelligence | crt.sh, CertSpotter | All historical SSL certificates, subdomains |
-| Domain Intelligence | WHOIS/RDAP | Registrar, expiry, privacy protection |
-| Asset Discovery | Passive DNS, Shodan | IPs, CDNs, cloud providers, exposed origin |
-| Technology Detection | HTTP headers, HTML | Server software, frameworks, CMS |
-| Email Security | DNS records | SPF, DKIM, DMARC, BIMI, MTA-STS |
-| HTTP Security | HTTP headers | HSTS, CSP, X-Frame-Options, cookies |
-| Reputation Intelligence | Google Safe Browsing, Spamhaus | Blacklists, malware, phishing |
-| Breach Intelligence | HaveIBeenPwned, DeHashed | Leaked emails, credentials |
-| Cloud Intelligence | IP ranges, headers | AWS, Azure, GCP, S3 buckets |
-| GitHub Intelligence | GitHub API | Public repos, secrets, CI/CD configs |
-| API Intelligence | HTTP discovery | Swagger, GraphQL, unauthenticated endpoints |
+## The Full Lifecycle of a Scan
 
-## 📈 Scoring Dimensions
+| Phase | Engine | What happens | Duration |
+|-------|--------|--------------|----------|
+| **1. Initiation** | — | User, schedule, API call, or bulk import triggers a scan; a Scan Job is created as PENDING | Instant |
+| **2. Discovery** | Discovery Engine | DNS, certificate logs, passive DNS, and WHOIS are queried; Discovery Map is built | 10–30 sec |
+| **3. Reconnaissance** | Reconnaissance Engine | Every asset is interrogated in parallel; findings aggregated | 30–90 sec |
+| **4. Correlation** | Correlation Engine | Findings are pattern-matched into systemic risks | 5–10 sec |
+| **5. Scoring** | Scoring Engine | Weighted rules applied; overall and per-dimension scores calculated | 2–5 sec |
+| **6. Intelligence** | Intelligence Engine | Compared to history and peers; narrative brief generated | 2–5 sec |
+| **7. Delivery** | — | Executive summary, technical report, and API response compiled and sent | Instant |
+| **8. Monitoring** | — | Domain enters portfolio; rescans scheduled; alerts fire on score drops or new critical findings | Ongoing |
 
-| Dimension | Weight | Focus |
-|-----------|--------|-------|
-| Email Security | 20% | SPF, DKIM, DMARC configuration |
-| Infrastructure Hygiene | 15% | SSL validity, DNSSEC, TLS versions |
-| Exposure Surface | 15% | Subdomains, admin panels, open ports |
-| Breach History | 15% | Leaked credentials, past compromises |
-| Reputation & Trust | 15% | Blacklists, domain age, spam scores |
-| Identity Integrity | 20% | WHOIS accuracy, domain expiry, registrar |
+**Failure handling** is built in at every phase: a domain that won't resolve fails cleanly as `DOMAIN_NOT_FOUND`; an unreachable external API marks findings `INCOMPLETE` and the scan continues rather than blocking.
 
-## 🔐 Authorization Flow
+---
+
+## Data Architecture — Core Entities
+
+| Entity | Purpose |
+|--------|---------|
+| **Organization** | The customer. Can own multiple domains. |
+| **Domain** | The scan target, linked to an organization. |
+| **Scan Job** | One scan execution — tracks status, timing, scoring version. |
+| **Asset** | A discovered resource: subdomain, IP, mail server. |
+| **Finding** | A single security observation, linked to an asset. |
+| **Correlation** | A pattern linking multiple findings. |
+| **Trust Score** | The calculated scores for a scan job. |
+| **Intelligence Brief** | Narrative insight generated from the score and trends. |
+| **Trust Report** | The unified deliverable — score, findings, correlations, intelligence. |
+
+---
+
+## Integration With TrustLayer
+
+TrustScan runs standalone — a business can sign up, add domains, and view reports with no dependency on TrustLayer. The integration is optional, and one-directional in trust: TrustLayer asks, TrustScan answers, and TrustLayer decides.
+
+Before an agreement moves from `CREATED` to `CONFIRMED`, TrustLayer's Rule Engine can call TrustScan for the counterparty's domain score:
+
+- **Score ≥ 70** → proceed to `CONFIRMED`
+- **Score 50–69** → proceed, but flagged for hold
+- **Score < 50** → `REJECTED`, reason: *"digital identity verification failed"*
+
+**Decoupling principle:** TrustLayer never knows how TrustScan calculates a score — only the score and the recommendation. If TrustScan is unreachable, TrustLayer defaults to manual review rather than failing.
+
+---
+
+## Monetization
+
+| Tier | Price (KES/month) | Included |
+|------|-------------------|----------|
+| Free | 0 | 1 domain, 1 scan/month, basic report |
+| Business | ~2,500 | 3 domains, weekly scans, alerts, PDF reports |
+| Pro | ~7,500 | 10 domains, daily scans, API access, white-label |
+| Enterprise | Custom | Unlimited domains, custom rules, SLA |
+
+The sell is **reputation protection, not cybersecurity** — most Kenyan SMEs will never pay for SecurityScorecard, but will pay to avoid a spoofed domain or a hacked email.
+
+---
+
+## Roadmap
+
+| Phase | Timeline | Deliverable |
+|-------|----------|-------------|
+| MVP | Weeks 1–4 | DNS + certificate + SSL scanners, basic Trust Score, web report |
+| v1.0 | Weeks 5–8 | Breach checker, tech fingerprinting, subdomain discovery, PDF reports |
+| v1.5 | Months 3–4 | Alerting, scheduling, multi-domain portfolios, M-Pesa billing |
+| v2.0 | Months 5–6 | API launch, white-label for resellers, TrustLayer integration docs |
+| Platform | Year 2 | Trust Intelligence module inside TrustLayer, AI-assisted recommendations |
+
+---
+
+## What Makes It Hard to Copy
+
+- **Kenyan context rules** — knowing that a missing DMARC record on a `.co.ke` domain is common today but dangerous, and weighting it accordingly
+- **The integration with TrustLayer** — once a score feeds real transaction decisions, the data is worth more than the scanner alone
+- **The scoring algorithm itself** — weights tuned over time against real fraud patterns observed through TrustLayer
+
+---
+
+## Build Order
+
+**Discovery and Reconnaissance are the foundation** — build those first.  
+The **Scoring Engine is the moat**.  
+The **Intelligence Engine is what makes the product irreplaceable** once enough domains have been scanned to benchmark against.
+
+---
+
+## Authorization Flow
 
 1. User adds domain (e.g., `company.co.ke`)
 2. System generates verification token
 3. User proves ownership via:
-   - **DNS TXT Record** (primary) - Add `trustscan-verify=<token>`
-   - **HTML File** - Upload `trustscan_<token>.html` to web root
-   - **Meta Tag** - Add `<meta name="trustscan-verification" content="<token>">`
-   - **Email** - Click link sent to admin@/webmaster@/postmaster@
-4. Domain marked `AUTHORIZED` - scanning permitted
+   - **DNS TXT Record** (primary) — Add `trustscan-verify=<token>`
+   - **HTML File** — Upload `trustscan_<token>.html` to web root
+   - **Meta Tag** — Add `<meta name="trustscan-verification" content="<token>">`
+   - **Email** — Click link sent to `admin@`/`webmaster@`/`postmaster@`
+4. Domain marked `AUTHORIZED` — scanning permitted
 5. User can revoke authorization anytime
 
-## 📡 API Integration (TrustLayer)
+---
+
+## TrustLayer API Integration
 
 ```bash
 # Get trust score for counterparty
@@ -252,69 +234,12 @@ GET /api/v1/public/trustscan/score/example.co.ke
 }
 ```
 
-## 🧪 Testing
+---
 
-```bash
-# Run all tests
-pytest
+## Global Support
 
-# Run with coverage
-pytest --cov=apps --cov-report=html
-
-# Run specific test
-pytest tests/unit/test_scoring.py -v
-```
-
-## 📚 Documentation
-
-- [Architecture](docs/architecture.md)
-- [API Reference](docs/api_reference.md)
-- [Scoring Rules](docs/scoring_rules.md)
-- [Deployment Guide](docs/deployment.md)
-
-## 🚢 Deployment
-
-### Docker (Recommended)
-
-```bash
-docker-compose up -d
-```
-
-### Manual Production
-
-```bash
-# Set production settings
-export DEBUG=False
-export ALLOWED_HOSTS=api.trustscan.co.ke,trustscan.co.ke
-
-# Run with Gunicorn
-gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 4
-
-# Run Celery with proper pool
-celery -A config worker -Q orchestration,discovery,reconnaissance,correlation,scoring,intelligence,reporting,billing,api,domains,accounts --pool=prefork --concurrency=4
-
-# Run Celery Beat
-celery -A config beat
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
-
-## 📄 License
-
-Proprietary - TrustScan Digital Trust Intelligence Platform
-
-## 📞 Support
-
-- Email: support@trustscan.co.ke
-- Documentation: https://docs.trustscan.co.ke
-- Status: https://status.trustscan.co.ke
+Works with any TLD (`.com`, `.org`, `.co.ke`, `.io`, etc.) and email addresses (e.g., `joelkaunda15@gmail.com` for email identity scanning).
 
 ---
 
-**TrustScan** — Map and protect your digital business. 🛡️
+*TrustScan — Map and protect your digital business.* 🛡️
