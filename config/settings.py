@@ -205,6 +205,59 @@ TRUSTSCAN_SCAN_TIMEOUT = int(os.getenv('TRUSTSCAN_SCAN_TIMEOUT', 300))
 TRUSTSCAN_MAX_SUBDOMAINS = int(os.getenv('TRUSTSCAN_MAX_SUBDOMAINS', 500))
 TRUSTSCAN_RATE_LIMIT_PER_HOUR = int(os.getenv('TRUSTSCAN_RATE_LIMIT_PER_HOUR', 10))
 
+_logs_dir = BASE_DIR / 'logs'
+_logs_writable = _logs_dir.exists()
+if not _logs_dir.exists():
+    try:
+        _logs_dir.mkdir(parents=True, exist_ok=True)
+        _logs_writable = True
+    except OSError:
+        _logs_writable = False
+
+_handlers = {
+    'console': {
+        'level': 'DEBUG',
+        'class': 'logging.StreamHandler',
+        'formatter': 'simple',
+    },
+}
+
+_loggers_root_handlers = ['console']
+_loggers_map = {}
+
+if _logs_writable:
+    _handlers['file'] = {
+        'level': 'INFO',
+        'class': 'logging.handlers.RotatingFileHandler',
+        'filename': _logs_dir / 'scanner.log',
+        'maxBytes': 1024 * 1024 * 10,
+        'backupCount': 5,
+        'formatter': 'verbose',
+    }
+    _handlers['celery_file'] = {
+        'level': 'INFO',
+        'class': 'logging.handlers.RotatingFileHandler',
+        'filename': _logs_dir / 'celery.log',
+        'maxBytes': 1024 * 1024 * 10,
+        'backupCount': 5,
+        'formatter': 'verbose',
+    }
+    _handlers['api_file'] = {
+        'level': 'INFO',
+        'class': 'logging.handlers.RotatingFileHandler',
+        'filename': _logs_dir / 'api.log',
+        'maxBytes': 1024 * 1024 * 10,
+        'backupCount': 5,
+        'formatter': 'verbose',
+    }
+    _loggers_root_handlers = ['console', 'file']
+    _loggers_map = {
+        'apps': {'handlers': ['console', 'file'], 'level': 'INFO', 'propagate': False},
+        'celery': {'handlers': ['console', 'celery_file'], 'level': 'INFO', 'propagate': False},
+        'api': {'handlers': ['console', 'api_file'], 'level': 'INFO', 'propagate': False},
+        'django': {'handlers': ['console', 'file'], 'level': 'INFO', 'propagate': False},
+    }
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -218,63 +271,12 @@ LOGGING = {
             'style': '{',
         },
     },
-    'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'scanner.log',
-            'maxBytes': 1024 * 1024 * 10,
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'celery_file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'celery.log',
-            'maxBytes': 1024 * 1024 * 10,
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'api_file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'api.log',
-            'maxBytes': 1024 * 1024 * 10,
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-        },
-    },
+    'handlers': _handlers,
     'root': {
-        'handlers': ['console', 'file'],
+        'handlers': _loggers_root_handlers,
         'level': 'INFO',
     },
-    'loggers': {
-        'apps': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'celery': {
-            'handlers': ['console', 'celery_file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'api': {
-            'handlers': ['console', 'api_file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'django': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-    },
+    'loggers': _loggers_map,
 }
 
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000').split(',')

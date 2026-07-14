@@ -119,3 +119,11 @@ uploads/
 # Backup
 *.bak
 *.backup
+# gstack (global install)
+.amazonq/rules/gstack.md
+
+# IDE/editor config
+.claude/
+
+# Nested clone
+Trustscan/
