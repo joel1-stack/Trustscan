@@ -78,23 +78,39 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
-_db_engine = os.getenv('DB_ENGINE') or 'django.db.backends.sqlite3'
-if _db_engine == 'django.db.backends.sqlite3':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': Path('/tmp/db.sqlite3') if (os.environ.get('VERCEL') or os.environ.get('NORTHFLANK')) else BASE_DIR / 'db.sqlite3',
+_db_url = os.getenv('DATABASE_URL')
+if _db_url:
+    import re
+    _match = re.match(r'postgres(?:ql)?://(.+?):(.+?)@(.+?):(\d+)/(.+?)$', _db_url)
+    if _match:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': _match.group(5),
+                'USER': _match.group(1),
+                'PASSWORD': _match.group(2),
+                'HOST': _match.group(3),
+                'PORT': _match.group(4),
+            }
         }
-    }
-else:
+    else:
+        DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql', 'NAME': 'postgres'}}
+elif os.getenv('DB_ENGINE'):
     DATABASES = {
         'default': {
-            'ENGINE': _db_engine,
+            'ENGINE': os.getenv('DB_ENGINE'),
             'NAME': os.getenv('DB_NAME', 'trustscan'),
             'USER': os.getenv('DB_USER', 'trustscan'),
             'PASSWORD': os.getenv('DB_PASSWORD', 'trustscan'),
             'HOST': os.getenv('DB_HOST', 'localhost'),
             'PORT': os.getenv('DB_PORT', '5432'),
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': Path('/tmp/db.sqlite3') if (os.environ.get('VERCEL') or os.environ.get('NORTHFLANK')) else BASE_DIR / 'db.sqlite3',
         }
     }
 
