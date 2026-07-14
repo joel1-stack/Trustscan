@@ -170,39 +170,40 @@ SPECTACULAR_SETTINGS = {
     'COMPONENT_SPLIT_REQUEST': True,
 }
 
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
-CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/1')
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Africa/Nairobi'
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+if not os.environ.get('VERCEL'):
+    CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+    CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/1')
+    CELERY_TASK_TRACK_STARTED = True
+    CELERY_TASK_TIME_LIMIT = 30 * 60
+    CELERY_ACCEPT_CONTENT = ['json']
+    CELERY_TASK_SERIALIZER = 'json'
+    CELERY_RESULT_SERIALIZER = 'json'
+    CELERY_TIMEZONE = 'Africa/Nairobi'
+    CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
-CELERY_TASK_ROUTES = {
-    'apps.discovery.workers.*': {'queue': 'discovery'},
-    'apps.reconnaissance.workers.*': {'queue': 'reconnaissance'},
-    'apps.correlation.workers.*': {'queue': 'correlation'},
-    'apps.scoring.workers.*': {'queue': 'scoring'},
-    'apps.intelligence.workers.*': {'queue': 'intelligence'},
-    'apps.reports.workers.*': {'queue': 'reporting'},
-    'apps.billing.workers.*': {'queue': 'billing'},
-    'apps.scanner.tasks.*': {'queue': 'orchestration'},
-}
+    CELERY_TASK_ROUTES = {
+        'apps.discovery.workers.*': {'queue': 'discovery'},
+        'apps.reconnaissance.workers.*': {'queue': 'reconnaissance'},
+        'apps.correlation.workers.*': {'queue': 'correlation'},
+        'apps.scoring.workers.*': {'queue': 'scoring'},
+        'apps.intelligence.workers.*': {'queue': 'intelligence'},
+        'apps.reports.workers.*': {'queue': 'reporting'},
+        'apps.billing.workers.*': {'queue': 'billing'},
+        'apps.scanner.tasks.*': {'queue': 'orchestration'},
+    }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': os.getenv('REDIS_URL', 'redis://localhost:6379/2'),
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': os.getenv('REDIS_URL', 'redis://localhost:6379/2'),
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            }
         }
     }
-}
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
+    SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+    SESSION_CACHE_ALIAS = 'default'
 
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
