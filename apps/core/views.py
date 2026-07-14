@@ -229,3 +229,41 @@ def verify_magic_link(request):
         return redirect('dashboard')
 
     return render(request, 'registration/login.html', {'error': 'Invalid magic link'})
+
+
+@csrf_exempt
+def init_view(request):
+    from django.core.management import call_command
+    import io, sys
+
+    out = io.StringIO()
+    err = io.StringIO()
+
+    # Run migrations
+    out.write('Running migrations...\n')
+    try:
+        call_command('migrate', '--noinput', stdout=out, stderr=err)
+        out.write('Migrations done.\n')
+    except Exception as e:
+        out.write(f'Migrate error: {e}\n')
+
+    # Create superuser
+    out.write('Creating superuser...\n')
+    try:
+        User = __import__('apps.accounts.models', fromlist=['User']).User
+        if not User.objects.filter(email='joelkaunda15@gmail.com').exists():
+            User.objects.create_superuser(
+                username='joelkaunda',
+                email='joelkaunda15@gmail.com',
+                password='Incorrect9.',
+                first_name='Joel',
+                last_name='Kaunda'
+            )
+            out.write('Superuser created!\n')
+        else:
+            out.write('Superuser already exists\n')
+    except Exception as e:
+        out.write(f'User error: {e}\n')
+
+    content = out.getvalue() + err.getvalue()
+    return JsonResponse({'status': 'ok', 'log': content})
