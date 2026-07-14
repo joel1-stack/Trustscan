@@ -2,6 +2,8 @@
 TrustScan Django Project Configuration.
 """
 
-from .celery import app as celery_app
+import os
 
-__all__ = ('celery_app',)
+if not os.environ.get('VERCEL'):
+    from .celery import app as celery_app
+    __all__ = ('celery_app',)
