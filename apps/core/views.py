@@ -161,7 +161,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        orgs = list(self.request.user.memberships.values_list('organization_id', flat=True))
+        try:
+            orgs = list(self.request.user.memberships.values_list('organization_id', flat=True))
+        except Exception:
+            orgs = []
         context['domain_count'] = Domain.objects.filter(organization_id__in=orgs, is_deleted=False).count()
         context['authorized_domain_count'] = Domain.objects.filter(organization_id__in=orgs, authorization_status='authorized').count()
         context['scan_count'] = ScanJob.objects.filter(domain__organization_id__in=orgs).count()
@@ -272,19 +275,44 @@ def init_view(request):
     out.write('Creating superuser...\n')
     try:
         User = __import__('apps.accounts.models', fromlist=['User']).User
-        if not User.objects.filter(email='joelkaunda15@gmail.com').exists():
-            User.objects.create_superuser(
-                username='joelkaunda',
-                email='joelkaunda15@gmail.com',
-                password='Incorrect9.',
-                first_name='Joel',
-                last_name='Kaunda'
-            )
+        user, created = User.objects.get_or_create(
+            email='joelkaunda15@gmail.com',
+            defaults={
+                'username': 'joelkaunda',
+                'first_name': 'Joel',
+                'last_name': 'Kaunda',
+                'is_staff': True,
+                'is_superuser': True,
+            }
+        )
+        if created:
+            user.set_password('Incorrect9.')
+            user.save()
             out.write('Superuser created!\n')
         else:
             out.write('Superuser already exists\n')
     except Exception as e:
         out.write(f'User error: {e}\n')
+
+    # Create Organization + Membership if missing
+    out.write('Creating organization...\n')
+    try:
+        Organization = __import__('apps.accounts.models', fromlist=['Organization']).Organization
+        org, org_created = Organization.objects.get_or_create(
+            name="Joel Kaunda's Organization",
+            defaults={'slug': f'org-{uuid.uuid4().hex[:8]}'}
+        )
+        if org_created:
+            out.write('Organization created!\n')
+        Membership = __import__('apps.accounts.models', fromlist=['Membership']).Membership
+        Membership.objects.get_or_create(
+            user=user,
+            organization=org,
+            defaults={'role': 'owner'}
+        )
+        out.write('Membership ensured.\n')
+    except Exception as e:
+        out.write(f'Org error: {e}\n')
 
     content = out.getvalue() + err.getvalue()
     return JsonResponse({'status': 'ok', 'log': content})
