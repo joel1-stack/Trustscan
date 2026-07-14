@@ -63,11 +63,32 @@ class ScanResultsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        scan = get_object_or_404(ScanJob, id=kwargs['scan_id'])
-        context['scan'] = scan
-        context['domain'] = scan.domain
-        context['score'] = TrustScore.objects.filter(scan_job=scan).first()
-        context['findings'] = Finding.objects.filter(scan_job=scan, is_deleted=False, is_false_positive=False)[:50]
+        scan_job = get_object_or_404(ScanJob, id=kwargs['scan_id'])
+        context['scan_job'] = scan_job
+        context['domain'] = scan_job.domain
+        score = TrustScore.objects.filter(scan_job=scan_job).first()
+        context['trust_score'] = score.overall if score else None
+        context['risk_level'] = score.risk_level if score else 'Unknown'
+        findings = Finding.objects.filter(scan_job=scan_job, is_deleted=False, is_false_positive=False)
+        context['findings'] = findings[:50]
+        context['findings_count'] = findings.count()
+        if scan_job.completed_at and scan_job.created_at:
+            delta = scan_job.completed_at - scan_job.created_at
+            context['duration'] = f'{delta.seconds//60}m {delta.seconds%60}s'
+        else:
+            context['duration'] = 'In progress'
+        context['dimensions'] = [
+            {'name': 'Email Security', 'score': score.email_security if score else 0, 'description': 'SPF, DKIM, DMARC posture'},
+            {'name': 'Infrastructure', 'score': score.infrastructure_hygiene if score else 0, 'description': 'SSL, DNS, hosting security'},
+            {'name': 'Exposure Surface', 'score': score.exposure_surface if score else 0, 'description': 'Public-facing risk surface'},
+            {'name': 'Breach History', 'score': score.breach_history if score else 0, 'description': 'Known breaches & leaks'},
+            {'name': 'Reputation', 'score': score.reputation_trust if score else 0, 'description': 'Blacklists & trust signals'},
+            {'name': 'Identity', 'score': score.identity_integrity if score else 0, 'description': 'Domain ownership & verification'},
+        ]
+        critical = findings.filter(severity='critical')[:3]
+        high = findings.filter(severity='high')[:3]
+        medium = findings.filter(severity='medium')[:3]
+        context['top_risks'] = list(critical) + list(high) + list(medium)
         return context
 
 
@@ -126,7 +147,7 @@ class LoginView(View):
         return render(request, 'registration/login.html')
 
     def post(self, request):
-        email = request.POST.get('username', '').strip().lower()
+        email = request.POST.get('email', '').strip().lower()
         password = request.POST.get('password', '')
         user = authenticate(request, username=email, password=password)
         if user is not None:
