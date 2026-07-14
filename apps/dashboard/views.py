@@ -10,6 +10,10 @@ from django.utils import timezone
 from datetime import timedelta
 
 
+class LandingPageView(TemplateView):
+    template_name = 'landing.html'
+
+
 @method_decorator(staff_member_required, name='dispatch')
 class AdminDashboardView(TemplateView):
     template_name = 'admin_dashboard.html'
