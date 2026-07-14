@@ -81,7 +81,7 @@ ASGI_APPLICATION = 'config.asgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': (Path('/tmp/db.sqlite3') if os.environ.get('VERCEL') else BASE_DIR / 'db.sqlite3'),
     }
 }
 
@@ -205,7 +205,8 @@ TRUSTSCAN_SCAN_TIMEOUT = int(os.getenv('TRUSTSCAN_SCAN_TIMEOUT', 300))
 TRUSTSCAN_MAX_SUBDOMAINS = int(os.getenv('TRUSTSCAN_MAX_SUBDOMAINS', 500))
 TRUSTSCAN_RATE_LIMIT_PER_HOUR = int(os.getenv('TRUSTSCAN_RATE_LIMIT_PER_HOUR', 10))
 
-_logs_dir = BASE_DIR / 'logs'
+_on_vercel = bool(os.environ.get('VERCEL'))
+_logs_dir = Path('/tmp/logs') if _on_vercel else BASE_DIR / 'logs'
 _logs_writable = _logs_dir.exists()
 if not _logs_dir.exists():
     try:
