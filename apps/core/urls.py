@@ -1,33 +1,15 @@
-"""
-Core URLs for health checks and basic endpoints.
-"""
 from django.urls import path
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-
-
-@csrf_exempt
-def health_check(request):
-    return JsonResponse({'status': 'healthy', 'service': 'trustscan'})
-
-
-@csrf_exempt
-def readiness_check(request):
-    from django.db import connection
-    try:
-        connection.ensure_connection()
-        return JsonResponse({'status': 'ready'})
-    except Exception:
-        return JsonResponse({'status': 'not ready'}, status=503)
-
-
-@csrf_exempt
-def liveness_check(request):
-    return JsonResponse({'status': 'alive'})
-
+from django.contrib.auth.views import LogoutView
+from apps.core import views
 
 urlpatterns = [
-    path('health/', health_check, name='health-check'),
-    path('ready/', readiness_check, name='readiness-check'),
-    path('live/', liveness_check, name='liveness-check'),
+    path('', views.LandingPageView.as_view(), name='home'),
+    path('scan/', views.ScanPageView.as_view(), name='scan_page'),
+    path('scan/<uuid:scan_id>/', views.ScanResultsView.as_view(), name='scan_results'),
+    path('register/', views.RegisterView.as_view(), name='register'),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
+    path('dashboard/', views.DashboardView.as_view(), name='dashboard'),
+    path('auth/magic-link/send/', views.send_magic_link, name='magic_link_send'),
+    path('auth/magic-link/verify/', views.verify_magic_link, name='magic_link_verify'),
 ]

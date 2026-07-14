@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}TrustScan - Digital Trust Intelligence Platform{% endblock %}
+{% block content %}
+<style>
+  .gradient-bg { background: linear-gradient(135deg, #1e3a5f 0%, #0f2440 50%, #0a1628 100%); }
+  .hero-glow { box-shadow: 0 0 60px rgba(30, 64, 175, 0.3); }
+  .score-excellent { color: #10B981; }
+  .score-good { color: #3B82F6; }
+  .score-fair { color: #F59E0B; }
+  .score-poor { color: #EF4444; }
+  .score-critical { color: #7F1D1D; }
+  .feature-card { transition: all 0.3s ease; }
+  .feature-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+  .pulse-dot { animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+</style>
+
+<!-- Hero -->
+<section class="gradient-bg text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+    <div class="text-center max-w-4xl mx-auto">
+      <div class="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 text-sm mb-8">
+        <span class="w-2 h-2 rounded-full bg-green-400 pulse-dot"></span>
+        TrustScan is live — scan any domain
+      </div>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+        Map and protect your<br>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">digital business</span>
+      </h1>
+      <p class="mt-6 text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+        TrustScan analyzes your domain across 12 intelligence layers — DNS, email security,
+        SSL/TLS, HTTP security, breach intelligence, and more — to produce a single,
+        actionable Trust Score.
+      </p>
+      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/scan/" class="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-lg transition-all shadow-lg hover:shadow-xl hero-glow">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          Scan a Domain
+        </a>
+        <a href="/register/" class="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-lg transition-all border border-white/20">
+          Get Started Free
+        </a>
+      </div>
+      <p class="mt-4 text-gray-400 text-sm">No credit card required. 1 free scan per domain.</p>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900">How TrustScan Works</h2>
+      <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">A 7-engine pipeline turns raw domain data into actionable intelligence</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="text-center p-8">
+        <div class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">1. Discovery</h3>
+        <p class="text-gray-600">DNS resolution, certificate transparency logs, WHOIS, and passive DNS map your entire digital footprint.</p>
+      </div>
+      <div class="text-center p-8">
+        <div class="w-16 h-16 rounded-2xl bg-emerald-100 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">2. Reconnaissance</h3>
+        <p class="text-gray-600">12 intelligence layers inspect DNS, SSL, email security, HTTP headers, technologies, and breach data.</p>
+      </div>
+      <div class="text-center p-8">
+        <div class="w-16 h-16 rounded-2xl bg-amber-100 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">3. Scoring</h3>
+        <p class="text-gray-600">6 weighted dimensions produce a 0–100 Trust Score with full explainability of every point change.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Score Bands -->
+<section class="py-20 bg-gray-50">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900">Trust Score Bands</h2>
+      <p class="mt-4 text-lg text-gray-600">Understand your security posture at a glance</p>
+    </div>
+    <div class="grid sm:grid-cols-5 gap-4">
+      <div class="bg-white rounded-xl p-6 text-center border-t-4 border-emerald-500 shadow-sm">
+        <div class="text-3xl font-bold score-excellent">90–100</div>
+        <div class="text-lg font-semibold text-gray-900 mt-2">Excellent</div>
+        <p class="text-sm text-gray-500 mt-1">Strong security posture</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 text-center border-t-4 border-blue-500 shadow-sm">
+        <div class="text-3xl font-bold score-good">70–89</div>
+        <div class="text-lg font-semibold text-gray-900 mt-2">Good</div>
+        <p class="text-sm text-gray-500 mt-1">Minor improvements needed</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 text-center border-t-4 border-amber-400 shadow-sm">
+        <div class="text-3xl font-bold score-fair">50–69</div>
+        <div class="text-lg font-semibold text-gray-900 mt-2">Fair</div>
+        <p class="text-sm text-gray-500 mt-1">Moderate risk areas</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 text-center border-t-4 border-red-500 shadow-sm">
+        <div class="text-3xl font-bold score-poor">30–49</div>
+        <div class="text-lg font-semibold text-gray-900 mt-2">Poor</div>
+        <p class="text-sm text-gray-500 mt-1">Significant vulnerabilities</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 text-center border-t-4 border-red-800 shadow-sm">
+        <div class="text-3xl font-bold score-critical">0–29</div>
+        <div class="text-lg font-semibold text-gray-900 mt-2">Critical</div>
+        <p class="text-sm text-gray-500 mt-1">Immediate action required</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900">Every scanning engine probes for specific signals</h2>
+      <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Each engine feeds its findings into the Trust Score, making every point change fully explainable</p>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="feature-card bg-gray-50 rounded-xl p-6">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center"><svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+          <h3 class="font-semibold text-gray-900">Email Security</h3>
+        </div>
+        <p class="text-sm text-gray-600">SPF, DKIM, DMARC, BIMI, MX records — detect spoofing vulnerabilities</p>
+      </div>
+      <div class="feature-card bg-gray-50 rounded-xl p-6">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center"><svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg></div>
+          <h3 class="font-semibold text-gray-900">SSL/TLS</h3>
+        </div>
+        <p class="text-sm text-gray-600">Certificate validity, expiry, protocol versions, cipher strength, HSTS</p>
+      </div>
+      <div class="feature-card bg-gray-50 rounded-xl p-6">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center"><svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+          <h3 class="font-semibold text-gray-900">DNS Health</h3>
+        </div>
+        <p class="text-sm text-gray-600">Zone transfers, wildcard records, DNSSEC, CAA, SOA configuration</p>
+      </div>
+      <div class="feature-card bg-gray-50 rounded-xl p-6">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center"><svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.966-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg></div>
+          <h3 class="font-semibold text-gray-900">Breach Intelligence</h3>
+        </div>
+        <p class="text-sm text-gray-600">HIBP, credential leaks, domain breaches, pastebin monitoring</p>
+      </div>
+      <div class="feature-card bg-gray-50 rounded-xl p-6">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center"><svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
+          <h3 class="font-semibold text-gray-900">Reputation</h3>
+        </div>
+        <p class="text-sm text-gray-600">Google Safe Browsing, VirusTotal, blocklist checks, spam databases</p>
+      </div>
+      <div class="feature-card bg-gray-50 rounded-xl p-6">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-lg bg-cyan-100 flex items-center justify-center"><svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg></div>
+          <h3 class="font-semibold text-gray-900">Technology Profiling</h3>
+        </div>
+        <p class="text-sm text-gray-600">Web server, frameworks, CMS, CDN, outdated software detection</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="gradient-bg text-white py-20">
+  <div class="max-w-4xl mx-auto px-4 text-center">
+    <h2 class="text-3xl sm:text-4xl font-bold">Ready to scan your domain?</h2>
+    <p class="mt-4 text-lg text-gray-300">Get your free Trust Score and see how your digital presence measures up</p>
+    <a href="/scan/" class="mt-8 inline-flex items-center px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-lg transition-all shadow-lg hover:shadow-xl">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      Scan Your Domain
+    </a>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="py-20 bg-white" id="pricing">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900">Simple Pricing</h2>
+      <p class="mt-4 text-lg text-gray-600">All prices in Kenyan Shillings (KES). No hidden fees.</p>
+    </div>
+    <div class="grid md:grid-cols-4 gap-6">
+      <div class="rounded-xl border border-gray-200 p-8 bg-white hover:shadow-lg transition-shadow">
+        <h3 class="text-xl font-bold text-gray-900">Free</h3>
+        <p class="text-3xl font-bold text-gray-900 mt-4">KES 0</p>
+        <p class="text-sm text-gray-500 mt-1">per month</p>
+        <ul class="mt-6 space-y-3 text-sm text-gray-600">
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>1 domain</li>
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>1 scan per month</li>
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Basic trust score</li>
+          <li class="flex items-start gap-2 text-gray-400"><svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>No API access</li>
+        </ul>
+        <a href="/register/" class="mt-8 block w-full text-center py-3 rounded-lg border border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors">Get Started</a>
+      </div>
+      <div class="rounded-xl border-2 border-blue-600 p-8 bg-white shadow-lg relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-bold px-4 py-1 rounded-full">POPULAR</div>
+        <h3 class="text-xl font-bold text-gray-900">Business</h3>
+        <p class="text-3xl font-bold text-gray-900 mt-4">KES 2,500</p>
+        <p class="text-sm text-gray-500 mt-1">per month</p>
+        <ul class="mt-6 space-y-3 text-sm text-gray-600">
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>3 domains</li>
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>4 scans per month</li>
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Weekly monitoring</li>
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>PDF reports</li>
+        </ul>
+        <a href="/register/" class="mt-8 block w-full text-center py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors">Subscribe</a>
+      </div>
+      <div class="rounded-xl border border-gray-200 p-8 bg-white hover:shadow-lg transition-shadow">
+        <h3 class="text-xl font-bold text-gray-900">Pro</h3>
+        <p class="text-3xl font-bold text-gray-900 mt-4">KES 7,500</p>
+        <p class="text-sm text-gray-500 mt-1">per month</p>
+        <ul class="mt-6 space-y-3 text-sm text-gray-600">
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>10 domains</li>
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>30 scans per month</li>
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>API access</li>
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>White-label reports</li>
+        </ul>
+        <a href="/register/" class="mt-8 block w-full text-center py-3 rounded-lg border border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors">Subscribe</a>
+      </div>
+      <div class="rounded-xl border border-gray-200 p-8 bg-gradient-to-br from-gray-50 to-blue-50 hover:shadow-lg transition-shadow">
+        <h3 class="text-xl font-bold text-gray-900">Enterprise</h3>
+        <p class="text-3xl font-bold text-gray-900 mt-4">Custom</p>
+        <p class="text-sm text-gray-500 mt-1">tailored pricing</p>
+        <ul class="mt-6 space-y-3 text-sm text-gray-600">
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Unlimited domains</li>
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Real-time scanning</li>
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><phrase stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Custom integrations</li>
+          <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Dedicated support</li>
+        </ul>
+        <a href="mailto:sales@trustscan.co.ke" class="mt-8 block w-full text-center py-3 rounded-lg bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-gray-400 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="text-sm">TrustScan — Digital Trust Intelligence Platform</div>
+      <div class="flex gap-6 text-sm">
+        <a href="https://trustscan.co.ke" class="hover:text-white transition-colors">Website</a>
+        <a href="/api/docs/" class="hover:text-white transition-colors">API</a>
+        <a href="mailto:hello@trustscan.co.ke" class="hover:text-white transition-colors">Contact</a>
+      </div>
+      <div class="text-sm">Nairobi, Kenya</div>
+    </div>
+  </div>
+</footer>
+{% endblock %}

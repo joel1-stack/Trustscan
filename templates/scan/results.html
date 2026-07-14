@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block title %}Scan Results - {{ domain.name }}{% endblock %}
+{% block content %}
+<style>
+  .score-circle { width: 160px; height: 160px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; margin: 0 auto; }
+  .score-number { font-size: 48px; font-weight: 800; line-height: 1; }
+  .score-label { font-size: 14px; opacity: 0.9; margin-top: 4px; }
+  .severity-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .finding-card { transition: all 0.2s; }
+  .finding-card:hover { transform: translateX(4px); }
+  .dimension-bar { height: 8px; border-radius: 4px; overflow: hidden; background: #e5e7eb; }
+  .dimension-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+</style>
+
+<div class="max-w-6xl mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center gap-3 mb-2">
+      <a href="/" class="text-blue-600 hover:text-blue-700 text-sm">&larr; Back</a>
+      <span class="text-gray-300">|</span>
+      <span class="text-sm text-gray-500">Scan Results</span>
+    </div>
+    <h1 class="text-3xl font-bold text-gray-900">{{ domain.name }}</h1>
+    <p class="text-gray-500 mt-1">Last scanned: {{ scan.completed_at|date:"F j, Y H:i"|default:"In progress..." }}</p>
+  </div>
+
+  {% if scan.status == 'completed' and score %}
+  <!-- Score + Summary -->
+  <div class="grid lg:grid-cols-3 gap-6 mb-8">
+    <div class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+      {% with status=score.status %}
+      {% if status == 'excellent' %}{% define bg="#10B981" %}{% define label="Excellent" %}
+      {% elif status == 'good' %}{% define bg="#3B82F6" %}{% define label="Good" %}
+      {% elif status == 'fair' %}{% define bg="#F59E0B" %}{% define label="Fair" %}
+      {% elif status == 'poor' %}{% define bg="#EF4444" %}{% define label="Poor" %}
+      {% else %}{% define bg="#7F1D1D" %}{% define label="Critical" %}{% endif %}
+      <div class="score-circle" style="background: {{ bg }}20; border: 4px solid {{ bg }};">
+        <div class="score-number" style="color: {{ bg }};">{{ score.overall }}</div>
+        <div class="score-label" style="color: {{ bg }};">{{ label }}</div>
+      </div>
+      {% endwith %}
+      <p class="text-sm text-gray-500 mt-4">Confidence: {{ score.confidence }}%</p>
+      <div class="flex justify-center gap-4 mt-4 text-sm">
+        <span class="flex items-center gap-1"><span class="severity-dot bg-red-800"></span>{{ score.critical_count }} Critical</span>
+        <span class="flex items-center gap-1"><span class="severity-dot bg-red-500"></span>{{ score.high_count }} High</span>
+        <span class="flex items-center gap-1"><span class="severity-dot bg-amber-400"></span>{{ score.medium_count }} Med</span>
+      </div>
+    </div>
+
+    <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+      <h2 class="text-lg font-semibold text-gray-900 mb-6">Dimension Scores</h2>
+      <div class="space-y-4">
+        {% for dim, dim_score in score.dimensions.items %}
+        {% with dim_name=dim|title|cut:"_" %}
+        <div>
+          <div class="flex justify-between text-sm mb-1">
+            <span class="text-gray-700 font-medium">{{ dim|title }}</span>
+            <span class="font-semibold {% if dim_score >= 70 %}text-green-600{% elif dim_score >= 50 %}text-amber-600{% else %}text-red-600{% endif %}">
+              {{ dim_score }}
+            </span>
+          </div>
+          <div class="dimension-bar">
+            <div class="dimension-fill {% if dim_score >= 70 %}bg-green-500{% elif dim_score >= 50 %}bg-amber-400{% else %}bg-red-500{% endif %}" 
+                 style="width: {{ dim_score }}%"></div>
+          </div>
+        </div>
+        {% endwith %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Risks -->
+  {% if score.top_risks %}
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Top Risks</h2>
+    <div class="space-y-3">
+      {% for risk in score.top_risks|slice:":5" %}
+      <div class="finding-card bg-red-50 border border-red-100 rounded-xl p-4">
+        <div class="flex items-start gap-3">
+          <span class="severity-dot bg-red-500 mt-2 shrink-0"></span>
+          <div>
+            <h4 class="font-medium text-red-800">{{ risk.title|default:risk.pattern }}</h4>
+            <p class="text-sm text-red-700 mt-1">{{ risk.description|default:risk.narrative }}</p>
+            {% if risk.remediation %}
+            <p class="text-xs text-red-600 mt-1"><strong>Fix:</strong> {{ risk.remediation }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Findings -->
+  {% if findings %}
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">All Findings ({{ findings|length }})</h2>
+    <div class="space-y-2">
+      {% for finding in findings %}
+      <div class="finding-card bg-gray-50 rounded-xl p-4 border border-gray-100">
+        <div class="flex items-start gap-3">
+          {% if finding.severity == 'critical' %}<span class="severity-dot bg-red-800 mt-2 shrink-0"></span>
+          {% elif finding.severity == 'high' %}<span class="severity-dot bg-red-500 mt-2 shrink-0"></span>
+          {% elif finding.severity == 'medium' %}<span class="severity-dot bg-amber-400 mt-2 shrink-0"></span>
+          {% elif finding.severity == 'low' %}<span class="severity-dot bg-blue-400 mt-2 shrink-0"></span>
+          {% else %}<span class="severity-dot bg-gray-400 mt-2 shrink-0"></span>{% endif %}
+          <div class="flex-1">
+            <div class="flex justify-between">
+              <h4 class="font-medium text-gray-900 text-sm">{{ finding.title }}</h4>
+              <span class="text-xs font-medium uppercase {% if finding.severity == 'critical' %}text-red-800{% elif finding.severity == 'high' %}text-red-600{% elif finding.severity == 'medium' %}text-amber-600{% else %}text-gray-500{% endif %}">
+                {{ finding.severity }}
+              </span>
+            </div>
+            <p class="text-sm text-gray-600 mt-1">{{ finding.description }}</p>
+            {% if finding.remediation_action %}
+            <p class="text-xs text-blue-600 mt-1"><strong>Remediation:</strong> {{ finding.remediation_action }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% elif scan.status == 'pending' or scan.status == 'discovering' or scan.status == 'reconnaissing' or scan.status == 'scoring' or scan.status == 'correlating' or scan.status == 'intelligencing' or scan.status == 'reporting' %}
+  <!-- Loading -->
+  <div class="text-center py-20">
+    <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+    <h2 class="text-xl font-semibold text-gray-900 mt-6">Scan in Progress</h2>
+    <p class="text-gray-500 mt-2">Phase: {{ scan.current_phase|default:"Starting..." }}</p>
+    <p class="text-gray-400 text-sm mt-1">This typically takes 30–60 seconds</p>
+    <script>
+      setTimeout(function() { location.reload(); }, 3000);
+    </script>
+  </div>
+
+  {% elif scan.status == 'failed' %}
+  <div class="text-center py-20">
+    <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto">
+      <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </div>
+    <h2 class="text-xl font-semibold text-gray-900 mt-6">Scan Failed</h2>
+    <p class="text-gray-500 mt-2">{{ scan.error_message|default:"An error occurred during scanning." }}</p>
+    <a href="/scan/" class="mt-6 inline-flex items-center px-6 py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700">Try Again</a>
+  </div>
+
+  {% else %}
+  <!-- Empty State -->
+  <div class="text-center py-20">
+    <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto">
+      <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    </div>
+    <h2 class="text-xl font-semibold text-gray-900 mt-6">No scan results yet</h2>
+    <p class="text-gray-500 mt-2">This domain hasn't been scanned yet.</p>
+    <a href="/scan/" class="mt-6 inline-flex items-center px-6 py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700">Scan a Domain</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

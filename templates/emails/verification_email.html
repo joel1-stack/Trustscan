@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify your domain - TrustScan</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f3f4f6; margin: 0; padding: 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background: #f3f4f6; padding: 40px 0;">
+        <tr>
+            <td align="center">
+                <table width="560" cellpadding="0" cellspacing="0" style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #1e3a5f, #0f2440); padding: 40px; text-align: center;">
+                            <h1 style="color: white; font-size: 24px; margin: 0; font-weight: 700;">TrustScan</h1>
+                            <p style="color: #94a3b8; margin: 8px 0 0; font-size: 14px;">Domain Verification</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 40px;">
+                            <h2 style="color: #111827; font-size: 20px; margin: 0;">Verify your domain ownership</h2>
+                            <p style="color: #6b7280; line-height: 1.6; margin: 16px 0 24px;">
+                                You've requested to verify <strong style="color: #111827;">{{ domain }}</strong> on TrustScan.
+                                Click the button below to confirm your ownership and start scanning.
+                            </p>
+                            <div style="text-align: center; margin: 32px 0;">
+                                <a href="{{ verification_url }}" style="display: inline-block; background: #2563eb; color: white; font-weight: 600; font-size: 16px; padding: 14px 36px; border-radius: 12px; text-decoration: none;">
+                                    Verify Domain
+                                </a>
+                            </div>
+                            <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 24px 0 0;">
+                                Or copy this link into your browser:<br>
+                                <code style="background: #f3f4f6; padding: 8px 12px; border-radius: 6px; font-size: 13px; word-break: break-all; display: inline-block; margin-top: 8px; color: #2563eb;">
+                                    {{ verification_url }}
+                                </code>
+                            </p>
+                            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+                            <p style="color: #9ca3af; font-size: 12px; line-height: 1.5; margin: 0;">
+                                This link expires in 24 hours. If you did not request this verification, please ignore this email.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background: #f9fafb; padding: 24px; text-align: center;">
+                            <p style="color: #9ca3af; font-size: 12px; margin: 0;">TrustScan — Digital Trust Intelligence Platform</p>
+                            <p style="color: #9ca3af; font-size: 12px; margin: 4px 0 0;">Nairobi, Kenya</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

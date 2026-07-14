@@ -91,7 +91,7 @@ def generate_reports(self, scan_job_id: str):
     
     scan_job.reports_generated = generated_reports
     scan_job.reporting_completed_at = timezone.now()
-    scan_job.transition_to(ScanJob.ScanStatusChoices.COMPLETED)
+    scan_job.transition_to('completed')
     
     return {
         'status': 'completed',

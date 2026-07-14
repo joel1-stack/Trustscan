@@ -14,7 +14,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-key-change-in-producti
 
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,.vercel.app').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,.vercel.app,.onrender.com,*.northflank.app').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -78,12 +78,25 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': (Path('/tmp/db.sqlite3') if os.environ.get('VERCEL') else BASE_DIR / 'db.sqlite3'),
+_db_engine = os.getenv('DB_ENGINE') or 'django.db.backends.sqlite3'
+if _db_engine == 'django.db.backends.sqlite3':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': Path('/tmp/db.sqlite3') if (os.environ.get('VERCEL') or os.environ.get('NORTHFLANK')) else BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': _db_engine,
+            'NAME': os.getenv('DB_NAME', 'trustscan'),
+            'USER': os.getenv('DB_USER', 'trustscan'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'trustscan'),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -107,6 +120,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -206,7 +221,8 @@ TRUSTSCAN_MAX_SUBDOMAINS = int(os.getenv('TRUSTSCAN_MAX_SUBDOMAINS', 500))
 TRUSTSCAN_RATE_LIMIT_PER_HOUR = int(os.getenv('TRUSTSCAN_RATE_LIMIT_PER_HOUR', 10))
 
 _on_vercel = bool(os.environ.get('VERCEL'))
-_logs_dir = Path('/tmp/logs') if _on_vercel else BASE_DIR / 'logs'
+_on_northflank = bool(os.environ.get('NORTHFLANK'))
+_logs_dir = Path('/tmp/logs') if (_on_vercel or _on_northflank) else BASE_DIR / 'logs'
 _logs_writable = _logs_dir.exists()
 if not _logs_dir.exists():
     try:
@@ -279,6 +295,8 @@ LOGGING = {
     },
     'loggers': _loggers_map,
 }
+
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if os.getenv('CSRF_TRUSTED_ORIGINS') else []
 
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000').split(',')
 CORS_ALLOW_CREDENTIALS = True

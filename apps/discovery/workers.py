@@ -2,6 +2,10 @@ from celery import shared_task
 from django.utils import timezone
 from apps.discovery.services import DiscoveryService
 from apps.core.exceptions import ScanError
+from celery import shared_task
+from django.utils import timezone
+from apps.discovery.services import DiscoveryService
+from apps.core.exceptions import ScanError
 from apps.scanner.models import ScanJob, ScanPhaseLog
 
 
@@ -51,7 +55,7 @@ def run_discovery(self, scan_job_id: str):
         }
         
     except Exception as e:
-        scan_job.transition_to(ScanJob.ScanStatusChoices.FAILED, f"Discovery failed: {str(e)}")
+        scan_job.transition_to('failed', f"Discovery failed: {str(e)}")
         ScanPhaseLog.objects.filter(
             scan_job=scan_job, phase='discovery'
         ).update(
