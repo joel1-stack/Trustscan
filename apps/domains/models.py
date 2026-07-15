@@ -32,7 +32,8 @@ class Domain(UUIDTimestampedSoftDeleteModel):
     organization = models.ForeignKey(
         'accounts.Organization',
         on_delete=models.CASCADE,
-        related_name='domains'
+        related_name='domains',
+        null=True, blank=True
     )
     name = models.CharField(max_length=255, validators=[validate_domain_format], db_index=True)
     root_domain = models.CharField(max_length=255, db_index=True)
