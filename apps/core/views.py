@@ -52,8 +52,13 @@ class ScanPageView(TemplateView):
             authorization_verified=False,
         )
 
-        from apps.scanner.tasks import orchestrate_scan
-        orchestrate_scan.delay(str(scan_job.id))
+        try:
+            from apps.scanner.tasks import orchestrate_scan
+            orchestrate_scan.delay(str(scan_job.id))
+        except Exception:
+            scan_job.status = 'pending'
+            scan_job.error_message = 'Scan queued - will process when worker is available'
+            scan_job.save(update_fields=['status', 'error_message'])
 
         return redirect('scan_results', scan_id=scan_job.id)
 
