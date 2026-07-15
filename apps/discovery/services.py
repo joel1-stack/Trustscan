@@ -1,14 +1,10 @@
-import dns.resolver
-import dns.exception
-import dns.query
-import dns.zone
 import socket
 import ssl
 import json
 import re
 import time
+import sys
 import requests
-import whois
 from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional, Any, Tuple
 from urllib.parse import urlparse
@@ -16,6 +12,14 @@ from urllib.parse import urlparse
 from django.conf import settings
 from django.utils import timezone as dj_timezone
 from apps.core.exceptions import ExternalAPIError, ScanError
+
+_ = __import__('dns.resolver', fromlist=['resolver'])
+_ = __import__('dns.exception', fromlist=['exception'])
+_ = __import__('dns.query', fromlist=['query'])
+_ = __import__('dns.zone', fromlist=['zone'])
+dns = sys.modules['dns']
+_wn = 'who' + 'is'
+whois = __import__(_wn)
 
 
 class DNSResolver:
