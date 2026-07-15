@@ -27,8 +27,8 @@ def run_intelligence(self, scan_job_id: str):
     if not trust_score:
         return {'status': 'skipped', 'reason': 'No trust score found'}
     
-    findings = list(Finding.objects.filter(scan_job=scan_job, is_deleted=False, is_false_positive=False))
-    correlations = list(Correlation.objects.filter(scan_job=scan_job, is_deleted=False))
+    findings = list(Finding.objects.filter(scan_job=scan_job, deleted_at__isnull=True, is_false_positive=False))
+    correlations = list(Correlation.objects.filter(scan_job=scan_job, deleted_at__isnull=True))
     
     industry = domain.industry
     tld = domain.tld

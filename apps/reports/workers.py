@@ -27,8 +27,8 @@ def generate_reports(self, scan_job_id: str):
     if not trust_score:
         raise ReportGenerationError("No trust score found for scan job")
     
-    findings = Finding.objects.filter(scan_job=scan_job, is_deleted=False)
-    correlations = Correlation.objects.filter(scan_job=scan_job, is_deleted=False)
+    findings = Finding.objects.filter(scan_job=scan_job, deleted_at__isnull=True)
+    correlations = Correlation.objects.filter(scan_job=scan_job, deleted_at__isnull=True)
     brief = IntelligenceBrief.objects.filter(scan_job=scan_job).first()
     
     generator = ReportGenerator()

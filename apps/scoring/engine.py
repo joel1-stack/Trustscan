@@ -58,7 +58,7 @@ class ScoringEngine:
         findings: List = list(
             Finding.objects.filter(
                 scan_job=scan_job,
-                is_deleted=False,
+                deleted_at__isnull=True,
                 is_false_positive=False,
             ).select_related('asset')
         )
@@ -66,7 +66,7 @@ class ScoringEngine:
         correlations: List = list(
             Correlation.objects.filter(
                 scan_job=scan_job,
-                is_deleted=False,
+                deleted_at__isnull=True,
             )
         )
 

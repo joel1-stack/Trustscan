@@ -325,7 +325,7 @@ def update_usage_records():
 
     for sub in subscriptions:
         domains_count = Domain.objects.filter(
-            organization=sub.organization, is_deleted=False
+            organization=sub.organization, deleted_at__isnull=True
         ).count()
         scans_performed = ScanJob.objects.filter(
             domain__organization=sub.organization,
@@ -359,7 +359,7 @@ def check_subscription_limits():
         plan = sub.plan
 
         # Domain limit check
-        domains = Domain.objects.filter(organization=sub.organization, is_deleted=False).count()
+        domains = Domain.objects.filter(organization=sub.organization, deleted_at__isnull=True).count()
         limit = getattr(plan, 'domains_limit', 0)
         if limit > 0 and domains >= limit * 0.9:
             alerts.append({

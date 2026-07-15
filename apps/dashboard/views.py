@@ -22,8 +22,8 @@ class AdminDashboardView(TemplateView):
         context = super().get_context_data(**kwargs)
         
         # Stats
-        total_organizations = Organization.objects.filter(is_deleted=False).count()
-        total_domains = Domain.objects.filter(is_deleted=False).count()
+        total_organizations = Organization.objects.filter(deleted_at__isnull=True).count()
+        total_domains = Domain.objects.filter(deleted_at__isnull=True).count()
         total_scans = ScanJob.objects.count()
         completed_scans = ScanJob.objects.filter(status='completed').count()
         
@@ -31,7 +31,7 @@ class AdminDashboardView(TemplateView):
         recent_scans = ScanJob.objects.select_related('domain', 'domain__organization').order_by('-created_at')[:10]
         
         # Average trust score
-        avg_score = TrustScore.objects.filter(is_deleted=False).aggregate(avg=Avg('overall'))['avg'] or 0
+        avg_score = TrustScore.objects.filter(deleted_at__isnull=True).aggregate(avg=Avg('overall'))['avg'] or 0
         
         # Scans this week
         week_ago = timezone.now() - timedelta(days=7)

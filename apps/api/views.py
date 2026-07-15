@@ -46,7 +46,7 @@ class PublicAPIKeyViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return PublicAPIKey.objects.filter(
             organization=self.request.user.organization,
-            is_deleted=False
+            deleted_at__isnull=True
         ).select_related('organization', 'created_by')
     
     def perform_create(self, serializer):
@@ -101,7 +101,7 @@ class WebhookEndpointViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return WebhookEndpoint.objects.filter(
             organization=self.request.user.organization,
-            is_deleted=False
+            deleted_at__isnull=True
         ).select_related('organization')
     
     def perform_create(self, serializer):
@@ -131,7 +131,7 @@ class WebhookDeliveryViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return WebhookDelivery.objects.filter(
             webhook__organization=self.request.user.organization,
-            is_deleted=False
+            deleted_at__isnull=True
         ).select_related('webhook')
 
 
@@ -145,7 +145,7 @@ class APIUsageQuotaViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return APIUsageQuota.objects.filter(
             organization=self.request.user.organization,
-            is_deleted=False
+            deleted_at__isnull=True
         )
 
 
@@ -159,7 +159,7 @@ class APIRequestLogViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return APIRequestLog.objects.filter(
             organization=self.request.user.organization,
-            is_deleted=False
+            deleted_at__isnull=True
         ).select_related('api_key')
 
 
@@ -208,7 +208,7 @@ class TrustScanPublicAPIViewSet(viewsets.ViewSet):
             domain_obj = Domain.objects.get(
                 name=domain,
                 authorization_status='authorized',
-                is_deleted=False
+                deleted_at__isnull=True
             )
         except Domain.DoesNotExist:
             return Response(
@@ -224,7 +224,7 @@ class TrustScanPublicAPIViewSet(viewsets.ViewSet):
         
         trust_score = TrustScore.objects.filter(
             domain=domain_obj,
-            is_deleted=False
+            deleted_at__isnull=True
         ).order_by('-calculated_at').first()
         
         if not trust_score:
@@ -245,7 +245,7 @@ class TrustScanPublicAPIViewSet(viewsets.ViewSet):
             'high_findings': trust_score.high_count,
             'correlations': [
                 {'pattern': c.pattern_name, 'risk': c.risk_level, 'narrative': c.narrative}
-                for c in trust_score.scan_job.correlations.filter(is_deleted=False)
+                for c in trust_score.scan_job.correlations.filter(deleted_at__isnull=True)
             ],
             'recommendations': trust_score.top_actions,
             'benchmarks': {
@@ -270,7 +270,7 @@ class TrustScanPublicAPIViewSet(viewsets.ViewSet):
         try:
             domain_obj = Domain.objects.get(
                 name__iexact=domain_name,
-                is_deleted=False
+                deleted_at__isnull=True
             )
         except Domain.DoesNotExist:
             return Response(
@@ -307,7 +307,7 @@ class TrustScanPublicAPIViewSet(viewsets.ViewSet):
             scan_job = ScanJob.objects.get(
                 id=scan_id,
                 domain__organization=request.auth.organization,
-                is_deleted=False
+                deleted_at__isnull=True
             )
         except ScanJob.DoesNotExist:
             return Response(
@@ -332,7 +332,7 @@ class TrustScanPublicAPIViewSet(viewsets.ViewSet):
     def list_domains(self, request):
         domains = Domain.objects.filter(
             organization=request.auth.organization,
-            is_deleted=False
+            deleted_at__isnull=True
         ).order_by('-created_at')
         
         return Response({
@@ -370,7 +370,7 @@ class TrustScanPublicAPIViewSet(viewsets.ViewSet):
             domain_obj = Domain.objects.get(
                 name__iexact=domain_name,
                 organization=request.auth.organization,
-                is_deleted=False
+                deleted_at__isnull=True
             )
         except Domain.DoesNotExist:
             return Response(
@@ -415,7 +415,7 @@ class TrustScanPublicAPIViewSet(viewsets.ViewSet):
             domain_obj = Domain.objects.get(
                 name__iexact=domain,
                 organization=request.auth.organization,
-                is_deleted=False
+                deleted_at__isnull=True
             )
         except Domain.DoesNotExist:
             return Response(
@@ -443,7 +443,7 @@ class TrustLayerIntegrationViewSet(viewsets.ViewSet):
             return Domain.objects.get(
                 name__iexact=domain_name,
                 organization=organization,
-                is_deleted=False
+                deleted_at__isnull=True
             )
         except Domain.DoesNotExist:
             return None
@@ -478,7 +478,7 @@ class TrustLayerIntegrationViewSet(viewsets.ViewSet):
         
         trust_score = TrustScore.objects.filter(
             domain=domain_obj,
-            is_deleted=False
+            deleted_at__isnull=True
         ).order_by('-calculated_at').first()
         
         if not trust_score:
@@ -497,7 +497,7 @@ class TrustLayerIntegrationViewSet(viewsets.ViewSet):
         
         critical_correlations = trust_score.scan_job.correlations.filter(
             risk_level='critical',
-            is_deleted=False
+            deleted_at__isnull=True
         ).count()
         
         return Response({

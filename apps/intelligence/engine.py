@@ -43,11 +43,11 @@ class IntelligenceEngine:
 
         industry_qs = TS.objects.filter(
             domain__industry=industry,
-            domain__is_deleted=False,
+            domain__deleted_at__isnull=True,
         )
         tld_qs = TS.objects.filter(
             domain__tld=tld,
-            domain__is_deleted=False,
+            domain__deleted_at__isnull=True,
         )
 
         industry_stats = industry_qs.aggregate(
@@ -60,7 +60,7 @@ class IntelligenceEngine:
         )
 
         all_scores = sorted(
-            TS.objects.filter(domain__is_deleted=False).values_list('overall', flat=True)
+            TS.objects.filter(domain__deleted_at__isnull=True).values_list('overall', flat=True)
         )
 
         percentile = 0
@@ -189,7 +189,7 @@ class IntelligenceEngine:
         from apps.intelligence.models import RegulatoryMapping
         from apps.reconnaissance.models import Finding
 
-        findings = Finding.objects.filter(scan_job=scan_job, is_deleted=False)
+        findings = Finding.objects.filter(scan_job=scan_job, deleted_at__isnull=True)
         finding_keys = {
             (f.source_layer, f.signal_category, f.severity)
             for f in findings
@@ -276,7 +276,7 @@ class BenchmarkEngine:
             for tld in self.TLDS:
                 qs = TrustScore.objects.filter(
                     domain__industry=industry,
-                    domain__is_deleted=False,
+                    domain__deleted_at__isnull=True,
                     calculated_at__gte=timezone.now() - timezone.timedelta(days=30),
                 )
                 if tld:

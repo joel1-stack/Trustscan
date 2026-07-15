@@ -24,7 +24,7 @@ class APIKeyAuthentication(BaseAuthentication):
             api_key = PublicAPIKey.objects.select_related('organization').get(
                 key_prefix=prefix,
                 is_active=True,
-                is_deleted=False
+                deleted_at__isnull=True
             )
         except PublicAPIKey.DoesNotExist:
             raise AuthenticationFailed('Invalid API key')
