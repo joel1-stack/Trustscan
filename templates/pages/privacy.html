@@ -1,4 +1,22 @@
-{% extends 'base.html' %}{% block title %}Privacy Policy — TrustScan{% endblock %}{% block content %}
-<section class="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"><div class="max-w-4xl mx-auto px-4 text-center"><h1 class="heading text-5xl font-extrabold text-white">Privacy Policy</h1><p class="text-xl text-gray-400 mt-4">Last updated: July 2026</p></div></section>
-<section class="py-20 bg-white"><div class="max-w-4xl mx-auto px-4 prose prose-gray max-w-none"><h2 class="heading text-2xl font-bold text-gray-900 mt-10 mb-4">1. Information We Collect</h2><p class="text-gray-600 leading-relaxed">We collect information you provide when creating an account (name, email) and domain names you submit for scanning. We also collect usage data to improve our service.</p><h2 class="heading text-2xl font-bold text-gray-900 mt-10 mb-4">2. How We Use Your Information</h2><p class="text-gray-600 leading-relaxed">Your information is used solely to provide and improve TrustScan services. We never sell your data to third parties.</p><h2 class="heading text-2xl font-bold text-gray-900 mt-10 mb-4">3. Data Security</h2><p class="text-gray-600 leading-relaxed">We implement industry-standard security measures to protect your data. Scan results are encrypted and stored securely.</p><h2 class="heading text-2xl font-bold text-gray-900 mt-10 mb-4">4. Contact</h2><p class="text-gray-600 leading-relaxed">For privacy inquiries, contact us at privacy@trustscan.app.</p></div></section>
+{% extends 'base.html' %}
+{% block title %}Privacy Policy — TrustScan{% endblock %}
+{% block content %}
+<section class="py-24 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-sm text-gray-300 mb-8">Legal</div>
+        <h1 class="heading text-5xl md:text-6xl font-extrabold text-white">Privacy Policy</h1>
+        <p class="text-xl text-gray-400 mt-4">Last updated: July 2026</p>
+    </div>
+</section>
+<section class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="space-y-12">
+            <div><h2 class="heading text-2xl font-bold text-gray-900 mb-4">1. Information We Collect</h2><p class="text-gray-600 leading-relaxed text-lg">We collect information you provide when creating an account (name, email) and domain names you submit for scanning. We also collect usage data to improve our service. Scan results are stored temporarily to provide you with access to your reports.</p></div>
+            <div><h2 class="heading text-2xl font-bold text-gray-900 mb-4">2. How We Use Your Information</h2><p class="text-gray-600 leading-relaxed text-lg">Your information is used solely to provide and improve TrustScan services. We never sell your data to third parties. Your scan results are private to you and your organization.</p></div>
+            <div><h2 class="heading text-2xl font-bold text-gray-900 mb-4">3. Data Security</h2><p class="text-gray-600 leading-relaxed text-lg">We implement industry-standard security measures to protect your data. All data is encrypted in transit and at rest. Scan results are stored securely and access is restricted to authorized users only.</p></div>
+            <div><h2 class="heading text-2xl font-bold text-gray-900 mb-4">4. Your Rights</h2><p class="text-gray-600 leading-relaxed text-lg">You have the right to access, correct, or delete your personal data at any time. Contact us at privacy@trustscan.app for any privacy-related requests.</p></div>
+            <div><h2 class="heading text-2xl font-bold text-gray-900 mb-4">5. Contact</h2><p class="text-gray-600 leading-relaxed text-lg">For privacy inquiries, contact us at <a href="mailto:privacy@trustscan.app" class="text-blue-600 hover:underline">privacy@trustscan.app</a>.</p></div>
+        </div>
+    </div>
+</section>
 {% endblock %}

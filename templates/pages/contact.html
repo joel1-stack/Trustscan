@@ -1,4 +1,47 @@
-{% extends 'base.html' %}{% block title %}Contact — TrustScan{% endblock %}{% block content %}
-<section class="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"><div class="max-w-4xl mx-auto px-4 text-center"><h1 class="heading text-5xl font-extrabold text-white">Contact Us</h1><p class="text-xl text-gray-400 mt-4">We'd love to hear from you.</p></div></section>
-<section class="py-20 bg-white"><div class="max-w-2xl mx-auto px-4"><div class="bg-gray-50 rounded-3xl p-8 border border-gray-100"><h2 class="heading text-2xl font-bold text-gray-900 mb-6">Get in Touch</h2><p class="text-gray-600 mb-8">Have questions about TrustScan, pricing, or integration? Reach out to us.</p><div class="space-y-4"><div class="flex items-center gap-4 p-4 rounded-2xl bg-white"><div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center"><svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><div><p class="font-medium text-gray-900">Email</p><p class="text-gray-500 text-sm">hello@trustscan.app</p></div></div><div class="flex items-center gap-4 p-4 rounded-2xl bg-white"><div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center"><svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><div><p class="font-medium text-gray-900">Location</p><p class="text-gray-500 text-sm">Nairobi, Kenya</p></div></div></div></div></div></section>
+{% extends 'base.html' %}
+{% block title %}Contact — TrustScan{% endblock %}
+{% block content %}
+<section class="py-24 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-sm text-gray-300 mb-8">Contact</div>
+        <h1 class="heading text-5xl md:text-6xl font-extrabold text-white">Get in Touch</h1>
+        <p class="text-xl text-gray-400 mt-4">We'd love to hear from you</p>
+    </div>
+</section>
+<section class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+                <h2 class="heading text-3xl font-extrabold text-gray-900 mb-6">Contact Information</h2>
+                <p class="text-gray-500 mb-8 text-lg">Have questions about TrustScan, pricing, or integration? Reach out to us.</p>
+                <div class="space-y-4">
+                    <div class="flex items-center gap-4 p-5 rounded-2xl bg-gray-50 border border-gray-100">
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0"><svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+                        <div><p class="font-medium text-gray-900">Email</p><p class="text-gray-500 text-sm">hello@trustscan.app</p></div>
+                    </div>
+                    <div class="flex items-center gap-4 p-5 rounded-2xl bg-gray-50 border border-gray-100">
+                        <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center shrink-0"><svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+                        <div><p class="font-medium text-gray-900">Location</p><p class="text-gray-500 text-sm">Nairobi, Kenya</p></div>
+                    </div>
+                    <div class="flex items-center gap-4 p-5 rounded-2xl bg-gray-50 border border-gray-100">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0"><svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                        <div><p class="font-medium text-gray-900">Response Time</p><p class="text-gray-500 text-sm">Typically within 24 hours</p></div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100">
+                    <h2 class="heading text-xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+                    <form method="post" class="space-y-4">
+                        {% csrf_token %}
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Your Name</label><input type="text" name="name" required class="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-sm" placeholder="John Doe"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label><input type="email" name="email" required class="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-sm" placeholder="you@example.com"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Message</label><textarea name="message" rows="4" required class="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-sm resize-none" placeholder="How can we help?"></textarea></div>
+                        <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:shadow-lg transition-all">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

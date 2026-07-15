@@ -1,4 +1,22 @@
-{% extends 'base.html' %}{% block title %}Terms of Service — TrustScan{% endblock %}{% block content %}
-<section class="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"><div class="max-w-4xl mx-auto px-4 text-center"><h1 class="heading text-5xl font-extrabold text-white">Terms of Service</h1><p class="text-xl text-gray-400 mt-4">Last updated: July 2026</p></div></section>
-<section class="py-20 bg-white"><div class="max-w-4xl mx-auto px-4"><h2 class="heading text-2xl font-bold text-gray-900 mt-10 mb-4">1. Acceptance of Terms</h2><p class="text-gray-600 leading-relaxed">By using TrustScan, you agree to these terms. If you do not agree, do not use the service.</p><h2 class="heading text-2xl font-bold text-gray-900 mt-10 mb-4">2. Service Description</h2><p class="text-gray-600 leading-relaxed">TrustScan provides domain scanning and digital trust intelligence. Scan results are for informational purposes and should not be your sole basis for security decisions.</p><h2 class="heading text-2xl font-bold text-gray-900 mt-10 mb-4">3. Acceptable Use</h2><p class="text-gray-600 leading-relaxed">You agree to only scan domains you own or have authorization to test. Abusing the platform may result in account termination.</p><h2 class="heading text-2xl font-bold text-gray-900 mt-10 mb-4">4. Limitation of Liability</h2><p class="text-gray-600 leading-relaxed">TrustScan is provided "as is" without warranty. We are not liable for damages arising from use of the service.</p></div></section>
+{% extends 'base.html' %}
+{% block title %}Terms of Service — TrustScan{% endblock %}
+{% block content %}
+<section class="py-24 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-sm text-gray-300 mb-8">Legal</div>
+        <h1 class="heading text-5xl md:text-6xl font-extrabold text-white">Terms of Service</h1>
+        <p class="text-xl text-gray-400 mt-4">Last updated: July 2026</p>
+    </div>
+</section>
+<section class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="space-y-12">
+            <div><h2 class="heading text-2xl font-bold text-gray-900 mb-4">1. Acceptance of Terms</h2><p class="text-gray-600 leading-relaxed text-lg">By using TrustScan, you agree to these terms. If you do not agree, do not use the service. We reserve the right to update these terms at any time.</p></div>
+            <div><h2 class="heading text-2xl font-bold text-gray-900 mb-4">2. Service Description</h2><p class="text-gray-600 leading-relaxed text-lg">TrustScan provides domain scanning and digital trust intelligence. Scan results are for informational purposes only and should not be your sole basis for security decisions. We strive for accuracy but cannot guarantee completeness.</p></div>
+            <div><h2 class="heading text-2xl font-bold text-gray-900 mb-4">3. Acceptable Use</h2><p class="text-gray-600 leading-relaxed text-lg">You agree to only scan domains you own or have explicit authorization to test. Automated or excessive use that degrades service performance is prohibited. Abusing the platform may result in account termination.</p></div>
+            <div><h2 class="heading text-2xl font-bold text-gray-900 mb-4">4. Limitation of Liability</h2><p class="text-gray-600 leading-relaxed text-lg">TrustScan is provided "as is" without warranty of any kind. We are not liable for damages arising from use of the service, including but not limited to reliance on scan results.</p></div>
+            <div><h2 class="heading text-2xl font-bold text-gray-900 mb-4">5. Contact</h2><p class="text-gray-600 leading-relaxed text-lg">For questions about these terms, contact us at <a href="mailto:legal@trustscan.app" class="text-blue-600 hover:underline">legal@trustscan.app</a>.</p></div>
+        </div>
+    </div>
+</section>
 {% endblock %}
