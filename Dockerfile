@@ -20,11 +20,9 @@ ENV REDIS_URL=rediss://default:gQAAAAAAAR0wAAIgcDI3NDE3ZTZkZDk1ZGE0NTg1YjBiOTlkN
 ENV CELERY_BROKER_URL=rediss://default:gQAAAAAAAR0wAAIgcDI3NDE3ZTZkZDk1ZGE0NTg1YjBiOTlkNmMzNzI5MTlkNw@pleasing-muskox-73008.upstash.io:6379
 ENV CELERY_RESULT_BACKEND=rediss://default:gQAAAAAAAR0wAAIgcDI3NDE3ZTZkZDk1ZGE0NTg1YjBiOTlkNmMzNzI5MTlkNw@pleasing-muskox-73008.upstash.io:6379
 
-RUN python manage.py migrate --noinput
-
-RUN adduser --disabled-password --no-create-home appuser
+RUN adduser --disabled-password --no-create-home appuser && chown -R appuser:appuser /app
 USER appuser
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120 & celery -A config worker --loglevel=info --concurrency=1 & wait"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 1 --timeout 120 & celery -A config worker --loglevel=info --concurrency=1 & wait"]
