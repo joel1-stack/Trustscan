@@ -17,4 +17,5 @@ urlpatterns = [
     path('auth/magic-link/send/', views.send_magic_link, name='magic_link_send'),
     path('auth/magic-link/verify/', views.verify_magic_link, name='magic_link_verify'),
     path('init/', views.init_view, name='init'),
+    path('health/', views.health_check, name='health_check'),
 ]

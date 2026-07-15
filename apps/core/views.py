@@ -333,3 +333,7 @@ def init_view(request):
 
     content = out.getvalue() + err.getvalue()
     return JsonResponse({'status': 'ok', 'log': content})
+
+
+def health_check(request):
+    return JsonResponse({'status': 'healthy'})
