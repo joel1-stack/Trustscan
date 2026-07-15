@@ -69,7 +69,7 @@ class ScanResultsView(TemplateView):
         score = TrustScore.objects.filter(scan_job=scan_job).first()
         context['trust_score'] = score.overall if score else None
         context['risk_level'] = score.risk_level if score else 'Unknown'
-        findings = Finding.objects.filter(scan_job=scan_job, is_deleted=False, is_false_positive=False)
+        findings = Finding.objects.filter(scan_job=scan_job, deleted_at__isnull=True, is_false_positive=False)
         context['findings'] = findings[:50]
         context['findings_count'] = findings.count()
         if scan_job.completed_at and scan_job.created_at:
@@ -165,7 +165,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             orgs = list(self.request.user.memberships.values_list('organization_id', flat=True))
         except Exception:
             orgs = []
-        context['domain_count'] = Domain.objects.filter(organization_id__in=orgs, is_deleted=False).count()
+        context['domain_count'] = Domain.objects.filter(organization_id__in=orgs, deleted_at__isnull=True).count()
         context['authorized_domain_count'] = Domain.objects.filter(organization_id__in=orgs, authorization_status='authorized').count()
         context['scan_count'] = ScanJob.objects.filter(domain__organization_id__in=orgs).count()
         context['completed_scan_count'] = ScanJob.objects.filter(domain__organization_id__in=orgs, status='completed').count()
@@ -254,6 +254,18 @@ def verify_magic_link(request):
 
     return render(request, 'registration/login.html', {'error': 'Invalid magic link'})
 
+
+class AboutPageView(TemplateView):
+    template_name = 'pages/about.html'
+
+class PrivacyPageView(TemplateView):
+    template_name = 'pages/privacy.html'
+
+class TermsPageView(TemplateView):
+    template_name = 'pages/terms.html'
+
+class ContactPageView(TemplateView):
+    template_name = 'pages/contact.html'
 
 @csrf_exempt
 def init_view(request):
