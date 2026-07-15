@@ -2,6 +2,7 @@ import hashlib
 import hmac
 import uuid
 import secrets
+import importlib
 from django.conf import settings
 from django.utils import timezone
 from django.db.models import Q
@@ -11,7 +12,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework.filters import SearchFilter, OrderingFilter
-from django_filters.rest_framework import DjangoFilterBackend
 from apps.api.models import (
     PublicAPIKey, WebhookEndpoint, WebhookDelivery, APIRequestLog, APIUsageQuota
 )
@@ -123,7 +123,7 @@ class WebhookEndpointViewSet(viewsets.ModelViewSet):
 class WebhookDeliveryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = WebhookDeliverySerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_backends = [importlib.import_module('django_filters.rest_framework').DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['status', 'event_type']
     ordering_fields = ['created_at', 'delivered_at']
     ordering = ['-created_at']
@@ -151,7 +151,7 @@ class APIUsageQuotaViewSet(viewsets.ReadOnlyModelViewSet):
 
 class APIRequestLogViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_backends = [importlib.import_module('django_filters.rest_framework').DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['response_status', 'method']
     ordering_fields = ['timestamp', 'duration_ms']
     ordering = ['-timestamp']
