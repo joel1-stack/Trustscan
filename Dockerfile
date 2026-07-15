@@ -25,4 +25,4 @@ USER appuser
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 1 --timeout 120 & celery -A config worker --loglevel=info --concurrency=1 & wait"]
+CMD ["sh", "-c", "python manage.py migrate --noinput 2>&1 | tail -5 & gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 1 --timeout 120 & celery -A config worker --loglevel=info --concurrency=1 & wait"]
