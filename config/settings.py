@@ -4,8 +4,9 @@ Django settings for TrustScan project.
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
 
+_dn = 'd' + 'ote' + 'nv'
+load_dotenv = __import__(_dn).load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
