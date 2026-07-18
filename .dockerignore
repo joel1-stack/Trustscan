@@ -7,7 +7,6 @@ __pycache__
 node_modules
 vercel.json
 index.html
-_check_deploy.py
-_check_deploy2.py
-_test_deploy.py
-_test_deploy2.py
+_check_*.py
+_test_*.py
+_login_*.py
