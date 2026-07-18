@@ -5,3 +5,7 @@
 __pycache__
 .env
 node_modules
+vercel.json
+index.html
+_check_deploy.py
+_check_deploy2.py
