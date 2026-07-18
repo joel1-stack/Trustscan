@@ -137,7 +137,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
-LOGIN_URL = '/auth/login/'
+LOGIN_URL = '/signin/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 
 REST_FRAMEWORK = {

@@ -90,6 +90,7 @@ logs/
 
 # Node
 node_modules/
+static/src/
 npm-debug.log*
 
 # Build

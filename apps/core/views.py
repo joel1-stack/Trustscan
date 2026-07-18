@@ -204,7 +204,7 @@ def send_magic_link(request):
         request.session['magic_link_email'] = email
         request.session['magic_link_expires'] = expires_at.isoformat()
 
-        magic_link = f"{request.scheme}://{request.get_host()}/auth/magic-link/verify/?token={token}&email={email}"
+        magic_link = f"{request.scheme}://{request.get_host()}/signin/magic-link/verify/?token={token}&email={email}"
 
         html = render_to_string('emails/magic_link.html', {'magic_link_url': magic_link})
 
