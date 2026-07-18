@@ -16,6 +16,7 @@ urlpatterns = [
     path('contact/', views.ContactPageView.as_view(), name='contact'),
     path('signin/magic-link/send/', views.send_magic_link, name='magic_link_send'),
     path('signin/magic-link/verify/', views.verify_magic_link, name='magic_link_verify'),
+    path('finding/<uuid:finding_id>/action/', views.finding_action, name='finding_action'),
     path('init/', views.init_view, name='init'),
     path('health/', views.health_check, name='health_check'),
 ]

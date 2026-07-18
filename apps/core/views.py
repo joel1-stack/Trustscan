@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -258,6 +258,27 @@ def verify_magic_link(request):
         return redirect('dashboard')
 
     return render(request, 'registration/login.html', {'error': 'Invalid magic link'})
+
+
+@csrf_exempt
+def finding_action(request, finding_id):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    from apps.reconnaissance.models import Finding
+    try:
+        finding = Finding.objects.get(id=finding_id, deleted_at__isnull=True)
+    except Finding.DoesNotExist:
+        return JsonResponse({'error': 'Finding not found'}, status=404)
+    action = request.POST.get('action', '')
+    if action == 'approve':
+        finding.is_false_positive = False
+        finding.save(update_fields=['is_false_positive'])
+        return JsonResponse({'status': 'approved'})
+    elif action == 'dispute':
+        finding.is_false_positive = True
+        finding.save(update_fields=['is_false_positive'])
+        return JsonResponse({'status': 'disputed'})
+    return JsonResponse({'error': 'Invalid action'}, status=400)
 
 
 class AboutPageView(TemplateView):
