@@ -73,7 +73,7 @@ class ScanResultsView(TemplateView):
         context['domain'] = scan_job.domain
         score = TrustScore.objects.filter(scan_job=scan_job).first()
         context['trust_score'] = score.overall if score else None
-        context['risk_level'] = score.risk_level if score else 'Unknown'
+        context['risk_level'] = score.get_status_display() if score else 'Unknown'
         findings = Finding.objects.filter(scan_job=scan_job, deleted_at__isnull=True, is_false_positive=False)
         context['findings'] = findings[:50]
         context['findings_count'] = findings.count()
