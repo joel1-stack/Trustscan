@@ -16,9 +16,9 @@ ENV DEBUG=False
 ENV ALLOWED_HOSTS=*
 ENV SECRET_KEY=django-insecure-prod-key-change-in-production
 ENV DATABASE_URL=postgresql://postgres:oGftHn0JoqZWAZJp@db.rzqryyarxezmsspudmxv.supabase.co:6543/postgres
-ENV REDIS_URL=rediss://default:gQAAAAAAAR0wAAIgcDI3NDE3ZTZkZDk1ZGE0NTg1YjBiOTlkNmMzNzI5MTlkNw@pleasing-muskox-73008.upstash.io:6379
-ENV CELERY_BROKER_URL=rediss://default:gQAAAAAAAR0wAAIgcDI3NDE3ZTZkZDk1ZGE0NTg1YjBiOTlkNmMzNzI5MTlkNw@pleasing-muskox-73008.upstash.io:6379
-ENV CELERY_RESULT_BACKEND=rediss://default:gQAAAAAAAR0wAAIgcDI3NDE3ZTZkZDk1ZGE0NTg1YjBiOTlkNmMzNzI5MTlkNw@pleasing-muskox-73008.upstash.io:6379
+ENV REDIS_URL=rediss://default:gQAAAAAAAR0wAAIgcDI3NDE3ZTZkZDk1ZGE0NTg1YjBiOTlkNmMzNzI5MTlkNw@pleasing-muskox-73008.upstash.io:6379?ssl_cert_reqs=CERT_REQUIRED
+ENV CELERY_BROKER_URL=rediss://default:gQAAAAAAAR0wAAIgcDI3NDE3ZTZkZDk1ZGE0NTg1YjBiOTlkNmMzNzI5MTlkNw@pleasing-muskox-73008.upstash.io:6379?ssl_cert_reqs=CERT_REQUIRED
+ENV CELERY_RESULT_BACKEND=rediss://default:gQAAAAAAAR0wAAIgcDI3NDE3ZTZkZDk1ZGE0NTg1YjBiOTlkNmMzNzI5MTlkNw@pleasing-muskox-73008.upstash.io:6379?ssl_cert_reqs=CERT_REQUIRED
 
 RUN adduser --disabled-password --no-create-home appuser && chown -R appuser:appuser /app
 USER appuser
