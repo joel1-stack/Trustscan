@@ -1,3 +1,4 @@
+# v2 - moved auth to /auth/ prefix to avoid SnapDeploy interception
 FROM python:3.12-slim
 
 WORKDIR /app
